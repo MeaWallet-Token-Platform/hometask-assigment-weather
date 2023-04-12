@@ -7,6 +7,7 @@ import com.paymentology.weather.repository.entity.GeoLocationEntity;
 import com.paymentology.weather.service.GeoLocationEntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class GeoLocationEntityServiceImpl implements GeoLocationEntityService {
     private final GeoLocationMapper mapper;
 
     @Override
+    @Cacheable(value = "geoLocationCache")
     public Optional<GeoLocationDto> findByHost(String host) {
         var dto = repository.findDtoByHost(host);
         dto.ifPresent(geoLocationDto -> log.info(GEO_LOCATION_FOUND_FOR_HOST + geoLocationDto.host()));

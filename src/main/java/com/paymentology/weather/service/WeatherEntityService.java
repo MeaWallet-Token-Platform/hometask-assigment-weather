@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface WeatherEntityService {
     Optional<WeatherDto> findByLocationAndUnit(GeoLocationDto geoLocationDto, TemperatureUnit unit);
 
-    WeatherDto save(WeatherDto weatherDto);
+    WeatherDto saveOrUpdate(WeatherDto weatherDto);
 }

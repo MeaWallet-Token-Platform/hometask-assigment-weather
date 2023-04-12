@@ -30,7 +30,7 @@ public class FacadeService {
 
         var geoLocationOptional = geoLocationEntityService.findByHost(host);
 
-        if (geoLocationOptional.isPresent()){
+        if (geoLocationOptional.isPresent()) {
             geoLocationDto = geoLocationOptional.get();
         } else {
             geoLocationDto = geoLocationApiService.findByHost(host)
@@ -42,7 +42,7 @@ public class FacadeService {
         var weatherDtoOptional = weatherApiService.findByLocationAndUnit(geoLocationDto, unit);
 
         if (weatherDtoOptional.isPresent()) {
-            return weatherEntityService.save(weatherDtoOptional.get());
+            return weatherEntityService.saveOrUpdate(weatherDtoOptional.get());
         }
 
         return weatherEntityService.findByLocationAndUnit(geoLocationDto, unit)

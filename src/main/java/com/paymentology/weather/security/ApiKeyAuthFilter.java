@@ -2,7 +2,8 @@ package com.paymentology.weather.security;
 
 import com.paymentology.weather.model.ClientApiKeyDto;
 import com.paymentology.weather.repository.ClientKeyRepository;
-import jakarta.servlet.*;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

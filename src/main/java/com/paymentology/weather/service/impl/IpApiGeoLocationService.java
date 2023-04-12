@@ -1,8 +1,8 @@
 package com.paymentology.weather.service.impl;
 
-import com.paymentology.weather.properties.IpApiProperties;
 import com.paymentology.weather.model.GeoLocationDto;
 import com.paymentology.weather.model.IpApiResponseDto;
+import com.paymentology.weather.properties.IpApiProperties;
 import com.paymentology.weather.service.GeoLocationApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,14 @@ public class IpApiGeoLocationService implements GeoLocationApiService {
     private final IpApiProperties properties;
     private final RestTemplate restTemplate;
 
+    private static Optional<InetAddress> findAddressByHost(String host) {
+        try {
+            return Optional.ofNullable(InetAddress.getByName(host));
+        } catch (UnknownHostException e) {
+            log.info("Unable to determine request IP address: " + host, e);
+            return Optional.empty();
+        }
+    }
 
     @Override
     public Optional<GeoLocationDto> findByHost(String host) {
@@ -44,15 +52,6 @@ public class IpApiGeoLocationService implements GeoLocationApiService {
         var geoLocation = new GeoLocationDto(host, response);
 
         return Optional.of(geoLocation);
-    }
-
-    private static Optional<InetAddress> findAddressByHost(String host) {
-        try {
-            return Optional.ofNullable(InetAddress.getByName(host));
-        } catch (UnknownHostException e) {
-            log.info("Unable to determine request IP address: " + host, e);
-            return Optional.empty();
-        }
     }
 
 }

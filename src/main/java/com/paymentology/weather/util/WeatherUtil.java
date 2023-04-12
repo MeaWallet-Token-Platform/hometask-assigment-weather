@@ -2,10 +2,10 @@ package com.paymentology.weather.util;
 
 import com.paymentology.weather.constant.TemperatureUnit;
 import com.paymentology.weather.model.GeoLocationDto;
+import com.paymentology.weather.model.OpenMeteoResponseDto;
 import com.paymentology.weather.model.TemperatureDto;
 import com.paymentology.weather.model.WeatherDto;
 import com.paymentology.weather.model.WindDto;
-import com.paymentology.weather.model.OpenMeteoResponseDto;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;

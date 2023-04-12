@@ -1,10 +1,10 @@
 package com.paymentology.weather.service.impl;
 
 import com.paymentology.weather.constant.TemperatureUnit;
-import com.paymentology.weather.model.WeatherDto;
 import com.paymentology.weather.model.GeoLocationDto;
-import com.paymentology.weather.properties.OpenMeteoProperties;
 import com.paymentology.weather.model.OpenMeteoResponseDto;
+import com.paymentology.weather.model.WeatherDto;
+import com.paymentology.weather.properties.OpenMeteoProperties;
 import com.paymentology.weather.service.WeatherApiService;
 import com.paymentology.weather.util.WeatherUtil;
 import lombok.RequiredArgsConstructor;
