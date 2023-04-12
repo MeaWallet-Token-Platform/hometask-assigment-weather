@@ -34,7 +34,7 @@ jobs:
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: lvvorovi/weather_2
-          tags: gateway-0.0.1, gateway-latest
+          tags: 0.0.1, latest
           registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
