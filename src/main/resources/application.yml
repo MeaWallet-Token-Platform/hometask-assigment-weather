@@ -11,6 +11,16 @@ spring:
       ddl-auto: validate
   liquibase:
     change-log: classpath:db/master.xml
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:info}
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: ${LOGGING_LEVEL_WEB:debug}
+
 ip-api:
   base-url: http://ip-api.com
   url-json: ${ip-api.base-url}/json/{ip}
