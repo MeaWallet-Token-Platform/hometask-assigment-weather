@@ -1,7 +1,8 @@
 package com.paymentology.weather.infra.http;
 
-import com.paymentology.weather.domain.client.ClientApiKey;
-import com.paymentology.weather.domain.client.ClientKeyRepository;
+import com.paymentology.weather.model.ClientApiKeyDto;
+import com.paymentology.weather.repository.ClientKeyRepository;
+import com.paymentology.weather.security.ApiKeyAuthFilter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +32,7 @@ class ApiKeyAuthFilterTest {
         var rsp = new MockHttpServletResponse();
         var chain = new MockFilterChain();
         rqt.addHeader("X-API-KEY", "key-1");
-        var key = new ClientApiKey(1, "key-1", false);
+        var key = new ClientApiKeyDto(1, "key-1", false);
         given(repo.find("key-1")).willReturn(Optional.of(key));
         victim.doFilterInternal(rqt, rsp, chain);
         assertEquals(200, rsp.getStatus());
@@ -63,7 +64,7 @@ class ApiKeyAuthFilterTest {
         var rsp = new MockHttpServletResponse();
         var chain = new MockFilterChain();
         rqt.addHeader("X-API-KEY", "key-1");
-        var key = new ClientApiKey(1, "key-1", true);
+        var key = new ClientApiKeyDto(1, "key-1", true);
         given(repo.find("key-1")).willReturn(Optional.of(key));
         victim.doFilterInternal(rqt, rsp, chain);
         assertEquals(403, rsp.getStatus());

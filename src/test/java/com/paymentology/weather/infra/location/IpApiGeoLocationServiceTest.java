@@ -1,6 +1,8 @@
 package com.paymentology.weather.infra.location;
 
-import com.paymentology.weather.domain.location.GeoLocation;
+import com.paymentology.weather.model.GeoLocationDto;
+import com.paymentology.weather.properties.IpApiProperties;
+import com.paymentology.weather.service.impl.IpApiGeoLocationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +26,7 @@ class IpApiGeoLocationServiceTest {
     String url = "http://ip-api.com/json";
 
     @Mock
-    IpApiConfig ipApiConfig;
+    IpApiProperties ipApiConfig;
 
     @Mock
     RestTemplate restTemplate;
@@ -55,15 +57,15 @@ class IpApiGeoLocationServiceTest {
                         "Bridge Group",
                         "AS12578 SIA Tet"
                 ));
-        var result = victim.detectByIp(InetAddress.getByName("81.198.87.60"));
-        assertEquals(Optional.of(new GeoLocation(56.9496, 24.0978)), result);
+        var result = victim.findByHost(InetAddress.getByName("81.198.87.60"));
+        assertEquals(Optional.of(new GeoLocationDto(56.9496, 24.0978)), result);
     }
 
     @Test
     public void error200() throws Exception {
         given(restTemplate.getForObject(url + "json/0.0.0.0", IpApiResponse.class))
                 .willReturn(new Fail("reserved range", "0.0.0.0"));
-        var result = victim.detectByIp(InetAddress.getByName("0.0.0.0"));
+        var result = victim.findByHost(InetAddress.getByName("0.0.0.0"));
         assertEquals(Optional.empty(), result);
     }
 
@@ -71,7 +73,7 @@ class IpApiGeoLocationServiceTest {
     void error4xx() throws Exception {
         given(restTemplate.getForObject(url + "/81.198.87.60", IpApiResponse.class))
                 .willThrow(new ResponseStatusException(HttpStatusCode.valueOf(404)));
-        var result = victim.detectByIp(InetAddress.getByName("81.198.87.60"));
+        var result = victim.findByHost(InetAddress.getByName("81.198.87.60"));
         assertEquals(Optional.empty(), result);
     }
 
@@ -79,7 +81,7 @@ class IpApiGeoLocationServiceTest {
     void errorThrowable() throws Exception {
         given(restTemplate.getForObject(url + "/81.198.87.60", IpApiResponse.class))
                 .willThrow(new RestClientException("mock"));
-        var result = victim.detectByIp(InetAddress.getByName("81.198.87.60"));
+        var result = victim.findByHost(InetAddress.getByName("81.198.87.60"));
         assertEquals(Optional.empty(), result);
     }
 }
