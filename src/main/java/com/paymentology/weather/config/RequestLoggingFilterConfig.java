@@ -10,8 +10,8 @@ public class RequestLoggingFilterConfig {
     @Bean
     public CommonsRequestLoggingFilter logFilter() {
         CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
-        filter.setIncludeQueryString(true);
         filter.setBeforeMessagePrefix("REQUEST: ");
+        filter.setIncludeQueryString(true);
         filter.setIncludePayload(false);
         filter.setMaxPayloadLength(1000);
         filter.setIncludeHeaders(false);

@@ -1,4 +1,4 @@
-package com.paymentology.weather.service.impl;
+package com.paymentology.weather.service;
 
 import com.paymentology.weather.constant.TemperatureUnit;
 import com.paymentology.weather.exception.BadRequestException;
@@ -18,6 +18,7 @@ public class FacadeService {
 
 
     public static final String UNABLE_TO_FIND_WEATHER = "Unable to find weather data for host: ";
+
     private final GeoLocationEntityService geoLocationEntityService;
     private final GeoLocationApiService geoLocationApiService;
     private final WeatherApiService weatherApiService;
@@ -47,7 +48,6 @@ public class FacadeService {
 
         return weatherEntityService.findByLocationAndUnit(geoLocationDto, unit)
                 .orElseThrow(() -> new BadRequestException(UNABLE_TO_FIND_WEATHER + host));
-
     }
 
 

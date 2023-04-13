@@ -1,43 +1,36 @@
 package com.paymentology.weather.model;
 
-import com.paymentology.weather.exception.BadRequestException;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
-@Data
-public class ErrorDto {
+public record ErrorDto(
 
-    private int code;
-    private String error;
-    private String message;
-    private LocalDateTime timeStamp;
-    private String uri;
-    private String method;
-    private String cause;
+        Integer code,
 
-    public ErrorDto(HttpStatus status, BadRequestException exception, HttpServletRequest request) {
-        this.code = status.value();
-        this.error = status.getReasonPhrase();
-        this.message = exception.getMessage();
-        this.cause = exception.getClass().getSimpleName();
-        this.uri = request.getRequestURI();
-        this.method = request.getMethod();
-        this.timeStamp = LocalDateTime.now();
-    }
+        String error,
 
-    public ErrorDto(HttpStatus status, String message, HttpServletRequest request) {
-        this.code = status.value();
-        this.error = status.getReasonPhrase();
-        this.message = message;
-        this.cause = null;
-        this.uri = request.getRequestURI();
-        this.method = request.getMethod();
-        this.timeStamp = LocalDateTime.now();
-    }
+        String message,
 
-    public ErrorDto() {
+        LocalDateTime timeStamp,
+
+        String uri,
+
+        String method,
+
+        String cause
+
+) {
+    public ErrorDto(HttpStatus status, RuntimeException exception, HttpServletRequest request) {
+        this(
+                status.value(),
+                status.getReasonPhrase(),
+                exception.getMessage(),
+                LocalDateTime.now(),
+                request.getRequestURI(),
+                request.getMethod(),
+                exception.getClass().getSimpleName()
+        );
     }
 }

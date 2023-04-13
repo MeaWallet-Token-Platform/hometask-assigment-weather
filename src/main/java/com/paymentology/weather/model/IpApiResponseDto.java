@@ -2,21 +2,21 @@ package com.paymentology.weather.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
-@Data
-public class IpApiResponseDto {
+public record IpApiResponseDto(
 
-    @NotNull
-    private String status;
+        @NotNull
+        String status,
 
-    private String message;
+        String message,
 
-    @JsonProperty("lat")
-    private Double latitude;
+        @JsonProperty("lat")
+        Double latitude,
 
-    @JsonProperty("lon")
-    private Double longitude;
+        @JsonProperty("lon")
+        Double longitude,
 
-    private String query;
+        String query
+
+) {
 }

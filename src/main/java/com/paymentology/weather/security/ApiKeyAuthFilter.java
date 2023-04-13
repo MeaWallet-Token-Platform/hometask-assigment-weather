@@ -1,6 +1,5 @@
 package com.paymentology.weather.security;
 
-import com.paymentology.weather.model.ClientApiKeyDto;
 import com.paymentology.weather.repository.ClientKeyRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,7 +33,7 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
         return Optional
                 .ofNullable(request.getHeader(X_API_KEY))
                 .flatMap(clientKeyRepository::findByApiKey)
-                .map(ClientApiKeyDto::revoked)
+                .map(key -> !key.revoked())
                 .orElse(false);
     }
 }

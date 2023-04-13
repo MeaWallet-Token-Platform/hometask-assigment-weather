@@ -4,5 +4,11 @@ import com.paymentology.weather.constant.TemperatureUnit;
 
 import java.io.Serializable;
 
-public record TemperatureDto(double value, TemperatureUnit unit) implements Serializable {
+public record TemperatureDto(
+
+        Double value,
+
+        TemperatureUnit unit
+
+) implements Serializable {
 }

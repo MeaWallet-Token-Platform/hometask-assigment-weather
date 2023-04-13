@@ -9,16 +9,12 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class RestTemplateConfig {
 
-    private final WeatherResponseExceptionHandler responseExceptionHandler;
-
     @Bean
     public RestTemplate restTemplate() {
         var template = new RestTemplate();
 
         template.getInterceptors()
                 .add(new WeatherClientHttpRequestInterceptor());
-
-        template.setErrorHandler(responseExceptionHandler);
 
         return template;
     }

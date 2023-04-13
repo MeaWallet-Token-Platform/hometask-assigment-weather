@@ -2,7 +2,7 @@ package com.paymentology.weather.controller;
 
 import com.paymentology.weather.constant.TemperatureUnit;
 import com.paymentology.weather.model.WeatherDto;
-import com.paymentology.weather.service.impl.FacadeService;
+import com.paymentology.weather.service.FacadeService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,8 @@ public class WeatherController {
     private final FacadeService service;
 
     @GetMapping
-    public ResponseEntity<WeatherDto> findByTemperatureUnitAndHost(@RequestParam(defaultValue = "CELSIUS") TemperatureUnit unit, HttpServletRequest request) {
+    public ResponseEntity<WeatherDto> findByTemperatureUnitAndHost(@RequestParam(defaultValue = "CELSIUS") TemperatureUnit unit,
+                                                                   HttpServletRequest request) {
         var header = request.getHeader(X_FORWARDED_FOR);
         var responseDto = service.findByUnitAndHost(unit, header);
 

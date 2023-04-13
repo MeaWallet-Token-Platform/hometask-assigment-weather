@@ -16,7 +16,6 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
 
-
 logging:
   level:
     root: ${LOGGING_LEVEL_ROOT:info}

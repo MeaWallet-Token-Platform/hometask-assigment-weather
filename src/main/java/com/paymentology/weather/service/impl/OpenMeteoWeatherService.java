@@ -21,7 +21,6 @@ import java.util.Optional;
 @Slf4j
 public class OpenMeteoWeatherService implements WeatherApiService {
 
-    private int counter = 0;
 
     private final OpenMeteoProperties properties;
     private final RestTemplate restTemplate;
@@ -38,27 +37,21 @@ public class OpenMeteoWeatherService implements WeatherApiService {
                         unit.toString().toLowerCase())
                 .toUri();
 
-        OpenMeteoResponseDto responseDto;
-
-        if (counter == 3) {
-            counter = 0;
-            return Optional.empty();
-        }
-
         try {
-            responseDto = restTemplate.getForObject(uri, OpenMeteoResponseDto.class);
-            counter++;
+            var openMeteoResponseDto = restTemplate.getForObject(uri, OpenMeteoResponseDto.class);
+
+            if (openMeteoResponseDto == null) {
+                return Optional.empty();
+            }
+
+            var weatherResponseDto = weatherUtil.createResponseDto(openMeteoResponseDto, geoLocation, unit);
+            return Optional.of(weatherResponseDto);
+
         } catch (RestClientException ex) {
             log.warn(this.getClass().getSimpleName() + " caught exception: " + ex);
             return Optional.empty();
         }
 
-        if (responseDto == null) {
-            return Optional.empty();
-        }
-
-        var weatherResponseDto = weatherUtil.createResponseDto(responseDto, geoLocation, unit);
-        return Optional.of(weatherResponseDto);
     }
 
 }

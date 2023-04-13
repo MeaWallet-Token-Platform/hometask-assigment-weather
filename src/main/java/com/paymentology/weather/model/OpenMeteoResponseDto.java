@@ -24,10 +24,6 @@ public class OpenMeteoResponseDto {
         return currentWeather.windDirection;
     }
 
-    public LocalDateTime getTimeStamp() {
-        return currentWeather.timestamp;
-    }
-
 
     static class CurrentWeather {
 
@@ -39,9 +35,5 @@ public class OpenMeteoResponseDto {
 
         @JsonProperty("winddirection")
         Double windDirection;
-
-        @JsonProperty("time")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        LocalDateTime timestamp;
     }
 }

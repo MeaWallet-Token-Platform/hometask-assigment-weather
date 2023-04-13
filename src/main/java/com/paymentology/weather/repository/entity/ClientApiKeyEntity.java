@@ -15,14 +15,14 @@ public class ClientApiKeyEntity {
 
     @Id
     @Column(name = "id")
-    Long id;
+    private Long id;
 
     @Column(name = "api_key")
-    String apiKey;
+    private String apiKey;
 
     @Column(name = "revoked")
-    boolean revoked;
+    private Boolean revoked;
 
     @Column(name = "created_at")
-    Instant createdAt;
+    private Instant createdAt;
 }

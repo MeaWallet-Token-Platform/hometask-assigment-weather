@@ -34,10 +34,10 @@
                 <constraints primaryKey="true" primaryKeyName="pk_host_id"/>
             </column>
             <column name="latitude" type="double precision">
-                <constraints nullable="false" unique="false"/>
+                <constraints nullable="true" unique="false"/>
             </column>
             <column name="longitude" type="double precision">
-                <constraints nullable="false" unique="false"/>
+                <constraints nullable="true" unique="false"/>
             </column>
         </createTable>
     </changeSet>
@@ -48,19 +48,19 @@
                 <constraints primaryKey="true" primaryKeyName="pk_weather_id"/>
             </column>
             <column name="temperature" type="double precision">
-                <constraints nullable="false" unique="false"/>
+                <constraints nullable="true" unique="false"/>
             </column>
             <column name="temperature_unit" type="varchar">
-                <constraints nullable="false" unique="false"/>
+                <constraints nullable="true" unique="false"/>
             </column>
             <column name="wind_speed" type="double precision">
-                <constraints nullable="false" unique="false"/>
+                <constraints nullable="true" unique="false"/>
             </column>
             <column name="wind_direction" type="double precision">
-                <constraints nullable="false" unique="false"/>
+                <constraints nullable="true" unique="false"/>
             </column>
             <column name="created" type="timestamp">
-                <constraints nullable="false" unique="false"/>
+                <constraints nullable="true" unique="false"/>
             </column>
 
         </createTable>
