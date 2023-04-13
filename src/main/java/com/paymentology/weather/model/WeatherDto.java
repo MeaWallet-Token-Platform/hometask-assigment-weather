@@ -3,9 +3,10 @@ package com.paymentology.weather.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.io.Serializable;
 import java.time.Instant;
 
-public record WeatherDto(
+public record WeatherDto (
 
         @JsonIgnore
         String host,
@@ -16,7 +17,7 @@ public record WeatherDto(
 
         Instant timestamp
 
-) {
+)implements Serializable  {
 
 
 }

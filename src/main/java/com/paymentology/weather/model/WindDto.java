@@ -1,4 +1,6 @@
 package com.paymentology.weather.model;
 
-public record WindDto(double speed, double direction) {
+import java.io.Serializable;
+
+public record WindDto(double speed, double direction) implements Serializable {
 }
