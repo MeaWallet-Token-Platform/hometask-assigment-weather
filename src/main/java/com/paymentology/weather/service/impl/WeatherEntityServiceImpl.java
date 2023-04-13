@@ -9,6 +9,8 @@ import com.paymentology.weather.repository.entity.WeatherEntity;
 import com.paymentology.weather.service.WeatherEntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,7 @@ public class WeatherEntityServiceImpl implements WeatherEntityService {
 
 
     @Override
-    @Cacheable(value = "weatherCache")
+    @Cacheable(value = "weatherCache", key = "#geoLocationDto.host + #unit")
     public Optional<WeatherDto> findByLocationAndUnit(GeoLocationDto geoLocationDto, TemperatureUnit unit) {
         var id = geoLocationDto.host() + unit;
         var entityOptional = repository.findById(id);
@@ -43,6 +45,7 @@ public class WeatherEntityServiceImpl implements WeatherEntityService {
     }
 
     @Override
+    @CachePut(value = "weatherCache", key = "#requestDto.host")
     public WeatherDto saveOrUpdate(WeatherDto requestDto) {
         var requestEntity = mapper.dtoToEntity(requestDto);
         var savedEntity = repository.save(requestEntity);
