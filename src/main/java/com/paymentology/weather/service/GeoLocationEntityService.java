@@ -6,8 +6,9 @@ import com.paymentology.weather.repository.GeoLocationRepository;
 import com.paymentology.weather.repository.entity.GeoLocationEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -34,11 +35,15 @@ public class GeoLocationEntityService {
         return dto;
     }
 
-    @CacheEvict(value = "geoLocationCache", key = "#requestDto.host" )
-    public GeoLocationDto save(GeoLocationDto requestDto) {
+    @CachePut(value = "geoLocationCache", key = "#requestDto.host")
+    public void saveOrUpdate(GeoLocationDto requestDto) {
         var requestEntity = mapper.dtoToEntity(requestDto);
         var savedEntity = repository.save(requestEntity);
         log.info(SAVED_WITH_ID + savedEntity.getId());
-        return mapper.entityToDto(savedEntity);
+    }
+
+    @Async
+    public void saveOrUpdateAsync(GeoLocationDto geoLocationDto) {
+        this.saveOrUpdate(geoLocationDto);
     }
 }

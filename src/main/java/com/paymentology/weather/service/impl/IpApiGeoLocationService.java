@@ -7,6 +7,7 @@ import com.paymentology.weather.service.GeoLocationApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,6 +41,7 @@ public class IpApiGeoLocationService implements GeoLocationApiService {
                     .getForObject(properties.getUrlJson(), IpApiResponseDto.class, ipAddress);
 
             if (ipApiResponseDto == null || !SUCCESS.equalsIgnoreCase(ipApiResponseDto.status())) {
+                log.warn(this.getClass().getSimpleName() + " request failed: " + ipApiResponseDto);
                 return Optional.empty();
             }
 
@@ -48,7 +50,7 @@ public class IpApiGeoLocationService implements GeoLocationApiService {
             return Optional.of(geoLocation);
 
         } catch (RestClientException ex) {
-            log.warn(this.getClass().getSimpleName() + " caught exception: " + ex);
+            log.warn(this.getClass().getSimpleName() + " caught exception on api call: " + ex);
             return Optional.empty();
         }
 
@@ -57,8 +59,8 @@ public class IpApiGeoLocationService implements GeoLocationApiService {
     private Optional<InetAddress> findAddressByHost(String host) {
         try {
             return Optional.ofNullable(InetAddress.getByName(host));
-        } catch (UnknownHostException e) {
-            log.info(UNABLE_TO_DETERMINE + host, e);
+        } catch (UnknownHostException | SecurityException e) {
+            log.warn(UNABLE_TO_DETERMINE + host, e);
             return Optional.empty();
         }
     }

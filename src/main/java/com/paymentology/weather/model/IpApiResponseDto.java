@@ -1,11 +1,9 @@
 package com.paymentology.weather.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotNull;
 
 public record IpApiResponseDto(
 
-        @NotNull
         String status,
 
         String message,

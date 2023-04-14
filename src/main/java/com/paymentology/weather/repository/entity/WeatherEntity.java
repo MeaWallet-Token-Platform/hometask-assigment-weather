@@ -22,17 +22,17 @@ public class WeatherEntity {
     private String id;
 
     @Column(name = "temperature")
-    private double temperature;
+    private Double temperature;
 
     @Column(name = "temperature_unit")
     @Enumerated(EnumType.STRING)
     private TemperatureUnit temperatureUnit;
 
     @Column(name = "wind_speed")
-    private double windSpeed;
+    private Double windSpeed;
 
     @Column(name = "wind_direction")
-    private double windDirection;
+    private Double windDirection;
 
     @Column(name = "created")
     private Instant created;

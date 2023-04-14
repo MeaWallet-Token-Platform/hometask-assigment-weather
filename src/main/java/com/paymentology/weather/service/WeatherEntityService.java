@@ -6,11 +6,16 @@ import com.paymentology.weather.model.GeoLocationDto;
 import com.paymentology.weather.model.WeatherDto;
 import com.paymentology.weather.repository.WeatherRepository;
 import com.paymentology.weather.repository.entity.WeatherEntity;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.SmartValidator;
 
 import java.util.Optional;
 
@@ -45,10 +50,14 @@ public class WeatherEntityService {
     }
 
     @CacheEvict(value = "weatherCache", key = "#requestDto.host")
-    public WeatherDto saveOrUpdate(WeatherDto requestDto) {
+    public void saveOrUpdate(WeatherDto requestDto) {
         var requestEntity = mapper.dtoToEntity(requestDto);
         var savedEntity = repository.save(requestEntity);
         log.info(WEATHER_ENTITY_SAVED_WITH_ID + savedEntity.getId());
-        return mapper.entityToDto(savedEntity);
+    }
+
+    @Async
+    public void saveOrUpdateAsync(WeatherDto weatherDto) {
+        this.saveOrUpdate(weatherDto);
     }
 }

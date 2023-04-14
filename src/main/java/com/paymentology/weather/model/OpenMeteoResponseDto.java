@@ -2,9 +2,7 @@ package com.paymentology.weather.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
+import lombok.experimental.Accessors;
 
 @Data
 public class OpenMeteoResponseDto {
@@ -25,7 +23,9 @@ public class OpenMeteoResponseDto {
     }
 
 
-    static class CurrentWeather {
+    @Data
+    @Accessors(chain = true)
+    public static class CurrentWeather {
 
         @JsonProperty("temperature")
         Double temperature;

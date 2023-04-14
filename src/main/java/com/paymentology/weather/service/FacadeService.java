@@ -4,20 +4,23 @@ import com.paymentology.weather.constant.TemperatureUnit;
 import com.paymentology.weather.exception.BadRequestException;
 import com.paymentology.weather.model.GeoLocationDto;
 import com.paymentology.weather.model.WeatherDto;
-import com.paymentology.weather.service.GeoLocationApiService;
-import com.paymentology.weather.service.GeoLocationEntityService;
-import com.paymentology.weather.service.WeatherApiService;
-import com.paymentology.weather.service.WeatherEntityService;
 import com.paymentology.weather.util.GeoLocationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FacadeService {
 
 
-    public static final String UNABLE_TO_FIND_WEATHER = "Unable to find weather data for host: ";
+    public static final String UNABLE_TO_FIND_WEATHER_DATA = "Unable to find weather data";
+    public static final String NO_HOST_PROVIDED = "No host provided. Substituting with standard host";
+    private static final String STANDARD_HOST = "standard_host";
+
 
     private final GeoLocationEntityService geoLocationEntityService;
     private final GeoLocationApiService geoLocationApiService;
@@ -26,29 +29,34 @@ public class FacadeService {
     private final GeoLocationUtil geoLocationUtil;
 
 
-    public WeatherDto findByUnitAndHost(TemperatureUnit unit, String host) {
+    public WeatherDto findByUnitAndHost(TemperatureUnit unit, String requestHost) {
+        var host = Optional.ofNullable(requestHost)
+                .orElseGet(() -> {
+                    log.warn(NO_HOST_PROVIDED);
+                    return STANDARD_HOST;
+                });
+
         GeoLocationDto geoLocationDto;
 
-        var geoLocationOptional = geoLocationEntityService.findByHost(host);
+        var geoLocationDtoOptional = geoLocationApiService.findByHost(host);
 
-        if (geoLocationOptional.isPresent()) {
-            geoLocationDto = geoLocationOptional.get();
+        if (geoLocationDtoOptional.isPresent()) {
+            geoLocationDto = geoLocationDtoOptional.get();
+            geoLocationEntityService.saveOrUpdateAsync(geoLocationDto);
         } else {
-            geoLocationDto = geoLocationApiService.findByHost(host)
+            geoLocationDto = geoLocationEntityService.findByHost(host)
                     .orElseGet(() -> geoLocationUtil.getStandardLocation(host));
-
-            geoLocationDto = geoLocationEntityService.save(geoLocationDto);
         }
 
         var weatherDtoOptional = weatherApiService.findByLocationAndUnit(geoLocationDto, unit);
 
         if (weatherDtoOptional.isPresent()) {
-            return weatherEntityService.saveOrUpdate(weatherDtoOptional.get());
+            weatherEntityService.saveOrUpdateAsync(weatherDtoOptional.get());
+            return weatherDtoOptional.get();
+        } else {
+            return weatherEntityService.findByLocationAndUnit(geoLocationDto, unit)
+                    .orElseThrow(() -> new BadRequestException(UNABLE_TO_FIND_WEATHER_DATA + host));
         }
-
-        return weatherEntityService.findByLocationAndUnit(geoLocationDto, unit)
-                .orElseThrow(() -> new BadRequestException(UNABLE_TO_FIND_WEATHER + host));
     }
-
 
 }
