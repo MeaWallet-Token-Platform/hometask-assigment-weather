@@ -50,10 +50,11 @@ public class WeatherEntityService {
     }
 
     @CacheEvict(value = "weatherCache", key = "#requestDto.host")
-    public void saveOrUpdate(WeatherDto requestDto) {
+    public WeatherDto saveOrUpdate(WeatherDto requestDto) {
         var requestEntity = mapper.dtoToEntity(requestDto);
         var savedEntity = repository.save(requestEntity);
         log.info(WEATHER_ENTITY_SAVED_WITH_ID + savedEntity.getId());
+        return mapper.entityToDto(savedEntity);
     }
 
     @Async
