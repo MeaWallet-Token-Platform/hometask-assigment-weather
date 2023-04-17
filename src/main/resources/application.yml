@@ -18,7 +18,6 @@ spring:
       repositories:
         enabled: false
 
-
 logging:
   level:
     root: ${LOGGING_LEVEL_ROOT:info}
@@ -35,3 +34,11 @@ open-meteo:
   base-url: https://api.open-meteo.com/v1/forecast
   current-weather-url: ${open-meteo.base-url}/?latitude={latitude}&longitude={longitude}&current_weather=true&temperature_unit={unit}
 
+connection:
+  max-total-connections: ${HTTP_MAX_TOTAL_CONNECTIONS:50}
+  max-connections-per-route-default: ${HTTP_MAX_CONNECTIONS_PER_ROUTE:20}
+  connection-request-timeout: ${HTTP_REQUEST_TIMEOUT:5000}
+  connection-keep-alive: ${HTTP_KEEP_ALIVE:60000}
+  socket-timeout: ${HTTP_SOCKET_TIMEOUT:1000}
+  connection-timeout: ${HTTP_CONNECTION_TIMEOUT:1000}
+  response-timeout: ${HTTP_RESPONSE_TIMEOUT:1000}
