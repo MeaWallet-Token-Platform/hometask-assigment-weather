@@ -25,7 +25,7 @@ public class OpenMeteoWeatherService implements WeatherApiService {
     private final OpenMeteoProperties properties;
     private final RestTemplate restTemplate;
     private final WeatherUtil weatherUtil;
-
+    private int counter = 0;
 
     @Override
     public Optional<WeatherDto> findByLocationAndUnit(GeoLocationDto geoLocation, TemperatureUnit unit) {
@@ -45,8 +45,15 @@ public class OpenMeteoWeatherService implements WeatherApiService {
             }
 
             var weatherResponseDto = weatherUtil.createResponseDto(openMeteoResponseDto, geoLocation, unit);
-            return Optional.of(weatherResponseDto);
 
+            counter++;
+
+            if (counter >= 3) {
+                counter = 0;
+                return Optional.empty();
+            } else {
+                return Optional.of(weatherResponseDto);
+            }
         } catch (RestClientException ex) {
             log.warn(this.getClass().getSimpleName() + " caught exception: " + ex);
             return Optional.empty();

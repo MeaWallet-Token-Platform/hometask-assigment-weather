@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.swing.text.html.Option;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
@@ -20,6 +21,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class IpApiGeoLocationService implements GeoLocationApiService {
 
+
+    private int counter = 0;
     public static final String SUCCESS = "success";
     public static final String UNABLE_TO_DETERMINE = "Unable to determine request IP address: ";
 
@@ -47,7 +50,14 @@ public class IpApiGeoLocationService implements GeoLocationApiService {
 
             var geoLocation = new GeoLocationDto(host, ipApiResponseDto);
 
-            return Optional.of(geoLocation);
+            counter++;
+
+            if (counter >= 3) {
+                counter = 0;
+                return Optional.empty();
+            } else {
+                return Optional.of(geoLocation);
+            }
 
         } catch (RestClientException ex) {
             log.warn(this.getClass().getSimpleName() + " caught exception on api call: " + ex);
