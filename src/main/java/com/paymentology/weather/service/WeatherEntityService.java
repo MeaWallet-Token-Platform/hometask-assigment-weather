@@ -49,16 +49,12 @@ public class WeatherEntityService {
         return Optional.empty();
     }
 
+    @Async
     @CacheEvict(value = "weatherCache", key = "#requestDto.host")
-    public WeatherDto saveOrUpdate(WeatherDto requestDto) {
+    public void saveOrUpdateAsync(WeatherDto requestDto) {
         var requestEntity = mapper.dtoToEntity(requestDto);
         var savedEntity = repository.save(requestEntity);
         log.info(WEATHER_ENTITY_SAVED_WITH_ID + savedEntity.getId());
-        return mapper.entityToDto(savedEntity);
     }
 
-    @Async
-    public void saveOrUpdateAsync(WeatherDto weatherDto) {
-        this.saveOrUpdate(weatherDto);
-    }
 }

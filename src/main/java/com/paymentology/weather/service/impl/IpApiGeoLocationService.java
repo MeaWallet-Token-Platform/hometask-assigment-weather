@@ -7,11 +7,9 @@ import com.paymentology.weather.service.GeoLocationApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.swing.text.html.Option;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
@@ -22,10 +20,8 @@ import java.util.Optional;
 public class IpApiGeoLocationService implements GeoLocationApiService {
 
 
-    private int counter = 0;
     public static final String SUCCESS = "success";
     public static final String UNABLE_TO_DETERMINE = "Unable to determine request IP address: ";
-
     private final IpApiProperties properties;
     private final RestTemplate restTemplate;
 
@@ -50,14 +46,7 @@ public class IpApiGeoLocationService implements GeoLocationApiService {
 
             var geoLocation = new GeoLocationDto(host, ipApiResponseDto);
 
-            counter++;
-
-            if (counter >= 3) {
-                counter = 0;
-                return Optional.empty();
-            } else {
-                return Optional.of(geoLocation);
-            }
+            return Optional.of(geoLocation);
 
         } catch (RestClientException ex) {
             log.warn(this.getClass().getSimpleName() + " caught exception on api call: " + ex);
