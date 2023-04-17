@@ -19,7 +19,7 @@ public class FacadeService {
 
     public static final String UNABLE_TO_FIND_WEATHER_DATA = "Unable to find weather data";
     public static final String NO_HOST_PROVIDED = "No host provided. Substituting with standard host";
-    private static final String STANDARD_HOST = "standard_host";
+    public static final String STANDARD_HOST = "standard_host";
 
 
     private final GeoLocationEntityService geoLocationEntityService;
@@ -51,7 +51,7 @@ public class FacadeService {
         var weatherDtoOptional = weatherApiService.findByLocationAndUnit(geoLocationDto, unit);
 
         if (weatherDtoOptional.isPresent()) {
-            weatherEntityService.saveOrUpdateAsync(weatherDtoOptional.get());
+            weatherEntityService.saveUpdateAsync(weatherDtoOptional.get());
             return weatherDtoOptional.get();
         } else {
             return weatherEntityService.findByLocationAndUnit(geoLocationDto, unit)

@@ -5,12 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "client_api_keys")
 @Data
+@Accessors(chain = true)
 public class ClientApiKeyEntity {
 
     @Id

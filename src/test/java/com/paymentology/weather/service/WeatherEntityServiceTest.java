@@ -12,13 +12,14 @@ import java.util.Optional;
 
 import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationDto;
+import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationEntity;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherDto;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherEntity;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -36,8 +37,8 @@ class WeatherEntityServiceTest {
     @Test
     void findByLocationAndUnit_whenExists_thenReturnOptionalOf() {
         var entity = newWeatherEntity();
-        var expected = newWeatherDto();
-        var geoLocationDto = newGeoLocationDto();
+        var expected = newWeatherDto(entity);
+        var geoLocationDto = newGeoLocationDto(newGeoLocationEntity());
         when(repository.findById(geoLocationDto.host() + CELSIUS)).thenReturn(Optional.of(entity));
         when(mapper.entityToDto(entity)).thenReturn(expected);
 
@@ -53,10 +54,21 @@ class WeatherEntityServiceTest {
     void findByLocationAndUnit_whenDoNotExists_thenReturnOptionalEmpty() {
         when(repository.findById(any())).thenReturn(Optional.empty());
 
-        var resultOptional = victim.findByLocationAndUnit(newGeoLocationDto(), CELSIUS);
+        var resultOptional = victim
+                .findByLocationAndUnit(newGeoLocationDto(newGeoLocationEntity()), CELSIUS);
 
         assertTrue(resultOptional.isEmpty());
         verifyNoMoreInteractions(repository, mapper);
+    }
+
+    @Test
+    void saveUpdateAsync_whenSaveRequest_thenDelegate() {
+        var entity = newWeatherEntity();
+        var dto = newWeatherDto(entity);
+        given(mapper.dtoToEntity(dto)).willReturn(entity);
+        given(repository.save(any())).willReturn(entity);
+
+        assertThatNoException().isThrownBy(() -> victim.saveUpdateAsync(dto));
     }
 
 
