@@ -18,6 +18,8 @@ spring:
       repositories:
         enabled: false
 
+
+
 logging:
   level:
     root: ${LOGGING_LEVEL_ROOT:info}

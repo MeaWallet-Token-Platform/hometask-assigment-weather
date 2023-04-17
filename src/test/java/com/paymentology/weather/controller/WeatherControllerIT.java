@@ -1,5 +1,6 @@
 package com.paymentology.weather.controller;
 
+import com.paymentology.weather.WeatherApplication;
 import com.paymentology.weather.model.ClientApiKeyDto;
 import com.paymentology.weather.model.IpApiResponseDto;
 import com.paymentology.weather.repository.ClientKeyRepository;
