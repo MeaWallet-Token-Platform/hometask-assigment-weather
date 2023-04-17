@@ -18,6 +18,7 @@ spring:
       repositories:
         enabled: false
 
+
 logging:
   level:
     root: ${LOGGING_LEVEL_ROOT:info}
@@ -26,6 +27,7 @@ logging:
         web:
           filter:
             CommonsRequestLoggingFilter: ${LOGGING_LEVEL_WEB:debug}
+        cache: trace
 
 ip-api:
   base-url: http://ip-api.com
