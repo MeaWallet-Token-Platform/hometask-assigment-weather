@@ -3,10 +3,10 @@ package com.paymentology.weather;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.boot.test.context.TestConfiguration;
-//import redis.embedded.RedisServer;
+import redis.embedded.RedisServer;
 
-//@TestConfiguration
-/*public class TestRedisConfig {
+@TestConfiguration
+public class TestRedisConfig {
 
     private final RedisServer redisServer;
 
@@ -23,4 +23,4 @@ import org.springframework.boot.test.context.TestConfiguration;
     public void preDestroy() {
         redisServer.stop();
     }
-}*/
+}
