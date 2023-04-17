@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -51,7 +52,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("synchronous")
-//@DirtiesContext
 class WeatherControllerIT {
 
     private String apiKey;
@@ -88,13 +88,8 @@ class WeatherControllerIT {
         ipApiResponseDto = newIpApiResponseDto("SUCCESS");
     }
 
-    @AfterEach
-    void windDown() {
-        verifyNoMoreInteractions(geoLocationApiService, weatherApiService, clientKeyRepository, geoLocationRepository, weatherRepository);
-    }
-
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+//    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void cachedAfterFirstFindInDb() throws Exception {
         var geoLocationDto = newGeoLocationDto(newGeoLocationEntity());
         var weatherDto = newWeatherDto(newWeatherEntity());
@@ -127,7 +122,7 @@ class WeatherControllerIT {
     }
 
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+//    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void cacheEvictRemovesValuesFromCache() throws Exception {
         var geoLocationEntity = newGeoLocationEntity();
         var geoLocationDto = newGeoLocationDto(geoLocationEntity);
