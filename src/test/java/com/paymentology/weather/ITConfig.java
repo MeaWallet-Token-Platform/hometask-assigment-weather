@@ -11,8 +11,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 
 @Configuration
-@Profile("synchronous")
-public class NonAsyncConfiguration {
+@Profile("test")
+public class ITConfig {
 
     @Bean
     @Primary
