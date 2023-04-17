@@ -1,7 +1,6 @@
 package com.paymentology.weather.controller;
 
-import com.paymentology.weather.TestRedisConfig;
-import com.paymentology.weather.WeatherApplication;
+import com.paymentology.weather.test.config.TestRedisConfig;
 import com.paymentology.weather.model.ClientApiKeyDto;
 import com.paymentology.weather.model.IpApiResponseDto;
 import com.paymentology.weather.repository.ClientKeyRepository;
@@ -11,27 +10,17 @@ import com.paymentology.weather.service.GeoLocationApiService;
 import com.paymentology.weather.service.GeoLocationEntityService;
 import com.paymentology.weather.service.WeatherApiService;
 import com.paymentology.weather.service.WeatherEntityService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.InetAddress;
-import java.net.URI;
 import java.util.Optional;
 
 import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
@@ -48,7 +37,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

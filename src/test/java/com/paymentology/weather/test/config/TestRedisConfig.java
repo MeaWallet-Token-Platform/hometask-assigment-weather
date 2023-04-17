@@ -1,4 +1,4 @@
-package com.paymentology.weather;
+package com.paymentology.weather.test.config;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -11,7 +11,12 @@ public class TestRedisConfig {
     private final RedisServer redisServer;
 
     public TestRedisConfig() {
-        this.redisServer = new RedisServer(6379);
+        this.redisServer = RedisServer.builder()
+                .port(6380)
+                .setting("maxmemory 128M") //maxheap 128M
+                .setting("maxheap 128M") //maxheap 128M
+
+                .build();
     }
 
     @PostConstruct

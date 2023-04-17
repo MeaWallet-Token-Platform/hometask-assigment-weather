@@ -1,7 +1,6 @@
-package com.paymentology.weather;
+package com.paymentology.weather.test.config;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
+import io.netty.util.internal.SocketUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -10,14 +9,13 @@ import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.support.collections.RedisProperties;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
 @Configuration
 @Profile("test")
-public class ITConfig {
+public class IntegrationTestConfig {
 
     @Bean
     @Primary
@@ -39,8 +37,7 @@ public class ITConfig {
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(
-                "127.0.0.1", 6379);
+        return new LettuceConnectionFactory("127.0.0.1", 6380);
     }
 
     @Bean
