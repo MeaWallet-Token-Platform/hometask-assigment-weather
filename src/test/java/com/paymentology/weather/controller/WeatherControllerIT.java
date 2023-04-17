@@ -13,6 +13,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
+@AutoConfigureDataJpa
 @ActiveProfiles("synchronous")
 class WeatherControllerIT {
 
@@ -89,7 +91,6 @@ class WeatherControllerIT {
     }
 
     @Test
-//    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void cachedAfterFirstFindInDb() throws Exception {
         var geoLocationDto = newGeoLocationDto(newGeoLocationEntity());
         var weatherDto = newWeatherDto(newWeatherEntity());
@@ -122,7 +123,6 @@ class WeatherControllerIT {
     }
 
     @Test
-//    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void cacheEvictRemovesValuesFromCache() throws Exception {
         var geoLocationEntity = newGeoLocationEntity();
         var geoLocationDto = newGeoLocationDto(geoLocationEntity);
