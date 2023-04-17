@@ -53,7 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureDataJpa
+//@AutoConfigureDataJpa
 @ActiveProfiles("test")
 class WeatherControllerIT {
 
