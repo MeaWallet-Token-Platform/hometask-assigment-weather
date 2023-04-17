@@ -40,7 +40,7 @@ public class ITConfig {
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(
-                "localhost", 6379);
+                "127.0.0.1", 6379);
     }
 
     @Bean

@@ -1,5 +1,6 @@
 package com.paymentology.weather.controller;
 
+import com.paymentology.weather.TestRedisConfig;
 import com.paymentology.weather.WeatherApplication;
 import com.paymentology.weather.model.ClientApiKeyDto;
 import com.paymentology.weather.model.IpApiResponseDto;
@@ -51,7 +52,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = TestRedisConfig.class)
 @AutoConfigureMockMvc
 //@AutoConfigureDataJpa
 @ActiveProfiles("test")
