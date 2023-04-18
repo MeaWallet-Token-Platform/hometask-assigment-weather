@@ -7,4 +7,5 @@ public interface GeoLocationMapper {
     GeoLocationEntity dtoToEntity(GeoLocationDto requestDto);
 
     GeoLocationDto entityToDto(GeoLocationEntity savedEntity);
+
 }

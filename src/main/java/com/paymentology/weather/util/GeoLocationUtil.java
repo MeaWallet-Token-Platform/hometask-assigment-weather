@@ -15,4 +15,5 @@ public class GeoLocationUtil {
     public GeoLocationDto getStandardLocation(String host) {
         return new GeoLocationDto(host, STANDARD_LATITUDE, STANDARD_LONGITUDE);
     }
+
 }

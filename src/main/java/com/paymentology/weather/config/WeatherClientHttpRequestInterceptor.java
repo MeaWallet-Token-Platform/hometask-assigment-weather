@@ -16,4 +16,5 @@ public class WeatherClientHttpRequestInterceptor implements ClientHttpRequestInt
         log.info("Api Call: " + request.getMethod() + " " + request.getURI());
         return execution.execute(request, body);
     }
+
 }

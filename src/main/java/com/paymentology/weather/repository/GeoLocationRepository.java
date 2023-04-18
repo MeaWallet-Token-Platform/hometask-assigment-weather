@@ -18,4 +18,5 @@ public interface GeoLocationRepository extends JpaRepository<GeoLocationEntity, 
             WHERE l.id = :id
             """)
     Optional<GeoLocationDto> findDtoByHost(@Param("id") String host);
+
 }

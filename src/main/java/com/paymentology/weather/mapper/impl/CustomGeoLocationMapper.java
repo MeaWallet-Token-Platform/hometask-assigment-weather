@@ -20,4 +20,5 @@ public class CustomGeoLocationMapper implements GeoLocationMapper {
     public GeoLocationDto entityToDto(GeoLocationEntity savedEntity) {
         return new GeoLocationDto(savedEntity.getId(), savedEntity.getLatitude(), savedEntity.getLongitude());
     }
+
 }

@@ -35,5 +35,7 @@ public class OpenMeteoResponseDto {
 
         @JsonProperty("winddirection")
         Double windDirection;
+
     }
+
 }

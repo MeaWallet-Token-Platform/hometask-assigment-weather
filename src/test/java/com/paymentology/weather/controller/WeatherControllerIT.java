@@ -38,7 +38,6 @@ import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationEntity;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherDto;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -57,16 +56,19 @@ class WeatherControllerIT {
     WeatherApiService weatherApiService;
     @MockBean
     ClientKeyRepository clientKeyRepository;
+
     @SpyBean
     GeoLocationRepository geoLocationRepository;
     @SpyBean
     WeatherRepository weatherRepository;
+
     @Autowired
     GeoLocationEntityService geoLocationEntityService;
     @Autowired
     WeatherEntityService weatherEntityService;
     @Autowired
     MockMvc mvc;
+
 
     private ClientApiKeyDto clientApiKeyDto;
     private GeoLocationDto geoLocationDto;

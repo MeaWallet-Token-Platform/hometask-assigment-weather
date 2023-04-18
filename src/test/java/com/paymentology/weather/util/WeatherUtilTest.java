@@ -49,5 +49,4 @@ class WeatherUtilTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
-
 }

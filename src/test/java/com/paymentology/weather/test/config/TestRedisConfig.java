@@ -28,4 +28,5 @@ public class TestRedisConfig {
     public void preDestroy() {
         redisServer.stop();
     }
+
 }

@@ -16,4 +16,5 @@ public class OpenMeteoProperties {
     @URL
     @NotBlank
     private String currentWeatherUrl;
+
 }

@@ -27,4 +27,5 @@ public class ClientApiKeyEntity {
 
     @Column(name = "created_at")
     private Instant createdAt;
+
 }

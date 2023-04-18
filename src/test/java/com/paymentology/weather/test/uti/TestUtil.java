@@ -29,7 +29,6 @@ public class TestUtil {
     public static final String IP_API_RESPONSE_STATUS_SUCCESS = "SUCCESS";
 
 
-
     public static TemperatureDto newTemperatureDto() {
         return new TemperatureDto(25.5, CELSIUS);
     }

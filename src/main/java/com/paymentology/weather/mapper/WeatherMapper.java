@@ -7,4 +7,5 @@ public interface WeatherMapper {
     WeatherDto entityToDto(WeatherEntity weatherEntity);
 
     WeatherEntity dtoToEntity(WeatherDto requestDto);
+
 }

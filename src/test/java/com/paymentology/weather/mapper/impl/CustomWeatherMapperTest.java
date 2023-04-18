@@ -7,11 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.data.cassandra.DataCassandraTest;
 
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherDto;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherEntity;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 class CustomWeatherMapperTest {
