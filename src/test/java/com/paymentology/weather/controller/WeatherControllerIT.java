@@ -49,6 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(classes = TestRedisConfig.class)
 @AutoConfigureMockMvc
+//@AutoConfigureDataJpa
 @ActiveProfiles("test")
 class WeatherControllerIT {
 

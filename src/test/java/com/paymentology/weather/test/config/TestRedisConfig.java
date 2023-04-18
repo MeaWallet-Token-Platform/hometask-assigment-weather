@@ -11,11 +11,7 @@ public class TestRedisConfig {
     private final RedisServer redisServer;
 
     public TestRedisConfig() {
-        this.redisServer = RedisServer.builder()
-                .port(6380)
-                .setting("maxmemory 64M")
-                .setting("maxheap 64M")
-                .build();
+        this.redisServer = new RedisServer(6379);
     }
 
     @PostConstruct
