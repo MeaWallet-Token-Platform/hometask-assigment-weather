@@ -22,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
 
@@ -89,7 +90,7 @@ class WeatherControllerIT {
         given(geoLocationApiService.findByHost(TEST_HOST)).willReturn(Optional.of(geoLocationDto));
         given(weatherApiService.findByLocationAndUnit(geoLocationDto, CELSIUS)).willReturn(Optional.of(weatherDto));
 
-        doHttpGetRequest();
+        doHttpGetRequestWith200();
         var geoLocationOne = geoLocationEntityService.findByHost(TEST_HOST);
         var geoLocationTwo = geoLocationEntityService.findByHost(TEST_HOST);
         var weatherOne = weatherEntityService.findByLocationAndUnit(geoLocationDto, CELSIUS);
@@ -107,10 +108,10 @@ class WeatherControllerIT {
         given(geoLocationApiService.findByHost(TEST_HOST)).willReturn(Optional.of(geoLocationDto));
         given(weatherApiService.findByLocationAndUnit(geoLocationDto, CELSIUS)).willReturn(Optional.of(weatherDto));
 
-        doHttpGetRequest();
+        doHttpGetRequestWith200();
         geoLocationEntityService.findByHost(geoLocationDto.host());
         weatherEntityService.findByLocationAndUnit(geoLocationDto, CELSIUS);
-        doHttpGetRequest();
+        doHttpGetRequestWith200();
         geoLocationEntityService.findByHost(geoLocationDto.host());
         weatherEntityService.findByLocationAndUnit(geoLocationDto, CELSIUS);
 
@@ -118,7 +119,15 @@ class WeatherControllerIT {
         verify(weatherRepository, times(2)).findById(weatherDto.host());
     }
 
-    private void doHttpGetRequest() throws Exception {
+    @Test
+    void whenRequestWithoutApiKey_thenReturnForbidden() throws Exception {
+        mvc.perform(get(TEST_HTTP_LOCALHOST_WEATHER)
+                        .header(TEST_X_API_KEY, TEST_API_KEY)
+                        .header(TEST_X_FORWARDED_FOR, TEST_HOST))
+                .andExpect(status().isForbidden());
+    }
+
+    private void doHttpGetRequestWith200() throws Exception {
         mvc.perform(get(TEST_HTTP_LOCALHOST_WEATHER)
                         .header(TEST_X_API_KEY, TEST_API_KEY)
                         .header(TEST_X_FORWARDED_FOR, TEST_HOST))
