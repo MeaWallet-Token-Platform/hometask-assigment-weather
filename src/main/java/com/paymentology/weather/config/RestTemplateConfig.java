@@ -32,11 +32,11 @@ public class RestTemplateConfig {
     }
 
 
-    ClientHttpRequestFactory requestFactory() {
+    private ClientHttpRequestFactory requestFactory() {
         return new HttpComponentsClientHttpRequestFactory(httpClient());
     }
 
-    public HttpClient httpClient() {
+    private HttpClient httpClient() {
         return HttpClientBuilder.create()
                 .setConnectionManager(connectionManager())
                 .setDefaultRequestConfig(requestConfig())
@@ -44,14 +44,14 @@ public class RestTemplateConfig {
     }
 
 
-    public PoolingHttpClientConnectionManager connectionManager() {
+    private PoolingHttpClientConnectionManager connectionManager() {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         connectionManager.setMaxTotal(properties.getMaxTotalConnections());
         connectionManager.setDefaultMaxPerRoute(properties.getMaxConnectionsPerRouteDefault());
         return connectionManager;
     }
 
-    public RequestConfig requestConfig() {
+    private RequestConfig requestConfig() {
         return RequestConfig
                 .custom()
                 .setConnectionRequestTimeout(ofMilliseconds(properties.getConnectionRequestTimeout()))

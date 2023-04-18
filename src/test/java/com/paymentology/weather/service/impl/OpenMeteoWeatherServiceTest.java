@@ -1,6 +1,5 @@
 package com.paymentology.weather.service.impl;
 
-import com.paymentology.weather.constant.TemperatureUnit;
 import com.paymentology.weather.model.GeoLocationDto;
 import com.paymentology.weather.model.OpenMeteoResponseDto;
 import com.paymentology.weather.model.WeatherDto;
@@ -20,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
+import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationDto;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationEntity;
 import static com.paymentology.weather.test.uti.TestUtil.newOpenMeteoResponseDto;
@@ -32,13 +32,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @ExtendWith(MockitoExtension.class)
 class OpenMeteoWeatherServiceTest {
 
-    private String url;
-    private String expandedUrl;
-    private TemperatureUnit unit;
-    private GeoLocationDto geoLocationDto;
-    private WeatherDto weatherDto;
-    private OpenMeteoResponseDto openMeteoResponseDto;
-
     @Mock
     OpenMeteoProperties properties;
     @Mock
@@ -49,18 +42,25 @@ class OpenMeteoWeatherServiceTest {
     @InjectMocks
     OpenMeteoWeatherService victim;
 
+
+    private String url;
+    private String expandedUrl;
+    private GeoLocationDto geoLocationDto;
+    private WeatherDto weatherDto;
+    private OpenMeteoResponseDto openMeteoResponseDto;
+
+
     @BeforeEach
     void setUp() {
         geoLocationDto = newGeoLocationDto(newGeoLocationEntity());
         url = "testUrl/{1}/{2}/{3}";
-        unit = TemperatureUnit.CELSIUS;
         openMeteoResponseDto = newOpenMeteoResponseDto();
         weatherDto = newWeatherDto(newWeatherEntity());
 
         expandedUrl = "testUrl/" +
                 geoLocationDto.latitude() + "/" +
                 geoLocationDto.longitude() + "/" +
-                unit.toString().toLowerCase();
+                CELSIUS.toString().toLowerCase();
     }
 
     @AfterEach
@@ -75,7 +75,7 @@ class OpenMeteoWeatherServiceTest {
         given(properties.getCurrentWeatherUrl()).willReturn(url);
         given(restTemplate.getForObject(uri, OpenMeteoResponseDto.class)).willReturn(null);
 
-        var result = victim.findByLocationAndUnit(geoLocationDto, unit);
+        var result = victim.findByLocationAndUnit(geoLocationDto, CELSIUS);
 
         assertEquals(expected, result);
     }
@@ -87,7 +87,7 @@ class OpenMeteoWeatherServiceTest {
         given(properties.getCurrentWeatherUrl()).willReturn(url);
         given(restTemplate.getForObject(uri, OpenMeteoResponseDto.class)).willThrow(new RestClientException("exceptionMessage"));
 
-        var result = victim.findByLocationAndUnit(geoLocationDto, unit);
+        var result = victim.findByLocationAndUnit(geoLocationDto, CELSIUS);
 
         assertEquals(expected, result);
     }
@@ -98,13 +98,12 @@ class OpenMeteoWeatherServiceTest {
         var uri = new URI(expandedUrl);
         given(properties.getCurrentWeatherUrl()).willReturn(url);
         given(restTemplate.getForObject(uri, OpenMeteoResponseDto.class)).willReturn(openMeteoResponseDto);
-        given(weatherUtil.createResponseDto(openMeteoResponseDto, geoLocationDto, unit)).willReturn(weatherDto);
+        given(weatherUtil.createResponseDto(openMeteoResponseDto, geoLocationDto, CELSIUS)).willReturn(weatherDto);
 
-        var result = victim.findByLocationAndUnit(geoLocationDto, unit);
+        var result = victim.findByLocationAndUnit(geoLocationDto, CELSIUS);
 
         assertEquals(expected, result);
     }
-
 
 
 }

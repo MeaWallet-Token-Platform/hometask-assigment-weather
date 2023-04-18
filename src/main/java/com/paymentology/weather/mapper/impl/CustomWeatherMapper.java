@@ -29,4 +29,5 @@ public class CustomWeatherMapper implements WeatherMapper {
                 .setWindDirection(requestDto.wind().direction())
                 .setCreated(requestDto.timestamp());
     }
+
 }

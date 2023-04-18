@@ -41,6 +41,5 @@ connection:
   max-connections-per-route-default: ${HTTP_MAX_CONNECTIONS_PER_ROUTE:20}
   connection-request-timeout: ${HTTP_REQUEST_TIMEOUT:5000}
   connection-keep-alive: ${HTTP_KEEP_ALIVE:60000}
-  socket-timeout: ${HTTP_SOCKET_TIMEOUT:1000}
   connection-timeout: ${HTTP_CONNECTION_TIMEOUT:1000}
   response-timeout: ${HTTP_RESPONSE_TIMEOUT:1000}

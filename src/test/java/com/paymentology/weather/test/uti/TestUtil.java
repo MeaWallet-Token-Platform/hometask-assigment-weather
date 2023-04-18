@@ -17,6 +17,17 @@ import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
 
 public class TestUtil {
 
+    public static final String TEST_HTTP_LOCALHOST_WEATHER = "http://localhost/weather";
+    public static final String TEST_X_API_KEY = "X-API-KEY";
+    public static final String TEST_X_FORWARDED_FOR = "X-Forwarded-For";
+    public static final String TEST_API_KEY = "testApiKey";
+    public static final String TEST_HOST = "testHost";
+    public static final String TEST_HEADER = "testHeader";
+    public static final String TEST_IP = "testIp";
+    public static final String TEST_URL = "testUrl";
+    public static final String IP_API_RESPONSE_STATUS_FAIL = "FAIL";
+    public static final String IP_API_RESPONSE_STATUS_SUCCESS = "SUCCESS";
+
 
     public static TemperatureDto newTemperatureDto() {
         return new TemperatureDto(25.5, CELSIUS);

@@ -36,4 +36,5 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
                 .map(key -> !key.revoked())
                 .orElse(false);
     }
+
 }

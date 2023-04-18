@@ -19,8 +19,6 @@ public class ConnectionProperties {
     @NotNull
     private Integer connectionRequestTimeout;
     @NotNull
-    private Integer socketTimeout;
-    @NotNull
     private Integer connectionTimeout;
     @NotNull
     private Integer responseTimeout;

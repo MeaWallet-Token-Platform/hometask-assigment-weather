@@ -1,6 +1,5 @@
 package com.paymentology.weather.service;
 
-import com.paymentology.weather.constant.TemperatureUnit;
 import com.paymentology.weather.exception.BadRequestException;
 import com.paymentology.weather.model.GeoLocationDto;
 import com.paymentology.weather.model.WeatherDto;
@@ -15,7 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
 import static com.paymentology.weather.service.FacadeService.STANDARD_HOST;
+import static com.paymentology.weather.test.uti.TestUtil.TEST_HOST;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationDto;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationEntity;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherDto;
@@ -41,18 +42,17 @@ class FacadeServiceTest {
     GeoLocationUtil geoLocationUtil;
     @InjectMocks
     FacadeService victim;
-    private String host;
-    private TemperatureUnit unit;
+
+
     private GeoLocationDto geoLocationDto;
     private GeoLocationDto standardGeoLocation;
     private WeatherDto weatherDto;
 
+
     @BeforeEach
     void setUp() {
-        host = "testHost";
-        unit = TemperatureUnit.CELSIUS;
         geoLocationDto = newGeoLocationDto(newGeoLocationEntity());
-        standardGeoLocation = new GeoLocationDto(host, 25.5, 25.5);
+        standardGeoLocation = new GeoLocationDto(TEST_HOST, 25.5, 25.5);
         weatherDto = newWeatherDto(newWeatherEntity());
     }
 
@@ -66,12 +66,12 @@ class FacadeServiceTest {
     @Test
     void findByUnitAndHost_whenRequest_thenFindAndReturn() {
         var expected = weatherDto;
-        given(geoLocationApiService.findByHost(host)).willReturn(Optional.of(geoLocationDto));
+        given(geoLocationApiService.findByHost(TEST_HOST)).willReturn(Optional.of(geoLocationDto));
         willDoNothing().given(geoLocationEntityService).saveOrUpdateAsync(geoLocationDto);
-        given(weatherApiService.findByLocationAndUnit(geoLocationDto, unit)).willReturn(Optional.of(weatherDto));
+        given(weatherApiService.findByLocationAndUnit(geoLocationDto, CELSIUS)).willReturn(Optional.of(weatherDto));
         willDoNothing().given(weatherEntityService).saveUpdateAsync(weatherDto);
 
-        var result = victim.findByUnitAndHost(unit, host);
+        var result = victim.findByUnitAndHost(CELSIUS, TEST_HOST);
 
         assertEquals(expected, result);
     }
@@ -81,10 +81,10 @@ class FacadeServiceTest {
         var expected = weatherDto;
         given(geoLocationApiService.findByHost(STANDARD_HOST)).willReturn(Optional.empty());
         given(geoLocationEntityService.findByHost(STANDARD_HOST)).willReturn(Optional.of(geoLocationDto));
-        given(weatherApiService.findByLocationAndUnit(geoLocationDto, unit)).willReturn(Optional.of(weatherDto));
+        given(weatherApiService.findByLocationAndUnit(geoLocationDto, CELSIUS)).willReturn(Optional.of(weatherDto));
         willDoNothing().given(weatherEntityService).saveUpdateAsync(weatherDto);
 
-        var result = victim.findByUnitAndHost(unit, null);
+        var result = victim.findByUnitAndHost(CELSIUS, null);
 
         assertEquals(expected, result);
     }
@@ -92,13 +92,13 @@ class FacadeServiceTest {
     @Test
     void findByUnitAndHost_whenEmptyResponseFromGeoApi_andNothingInDb_thenUseStandardLocation_andReturn() {
         var expected = weatherDto;
-        given(geoLocationApiService.findByHost(host)).willReturn(Optional.empty());
-        given(geoLocationEntityService.findByHost(host)).willReturn(Optional.empty());
-        given(geoLocationUtil.getStandardLocation(host)).willReturn(standardGeoLocation);
-        given(weatherApiService.findByLocationAndUnit(standardGeoLocation, unit)).willReturn(Optional.of(weatherDto));
+        given(geoLocationApiService.findByHost(TEST_HOST)).willReturn(Optional.empty());
+        given(geoLocationEntityService.findByHost(TEST_HOST)).willReturn(Optional.empty());
+        given(geoLocationUtil.getStandardLocation(TEST_HOST)).willReturn(standardGeoLocation);
+        given(weatherApiService.findByLocationAndUnit(standardGeoLocation, CELSIUS)).willReturn(Optional.of(weatherDto));
         willDoNothing().given(weatherEntityService).saveUpdateAsync(weatherDto);
 
-        var result = victim.findByUnitAndHost(unit, host);
+        var result = victim.findByUnitAndHost(CELSIUS, TEST_HOST);
 
         assertEquals(expected, result);
     }
@@ -106,26 +106,26 @@ class FacadeServiceTest {
     @Test
     void findByUnitAndHost_whenEmptyResponseFromWeatherApi_thenFindInDb_andReturn() {
         var expected = weatherDto;
-        given(geoLocationApiService.findByHost(host)).willReturn(Optional.of(geoLocationDto));
+        given(geoLocationApiService.findByHost(TEST_HOST)).willReturn(Optional.of(geoLocationDto));
         willDoNothing().given(geoLocationEntityService).saveOrUpdateAsync(geoLocationDto);
-        given(weatherApiService.findByLocationAndUnit(geoLocationDto, unit)).willReturn(Optional.empty());
-        given(weatherEntityService.findByLocationAndUnit(geoLocationDto, unit)).willReturn(Optional.of(weatherDto));
+        given(weatherApiService.findByLocationAndUnit(geoLocationDto, CELSIUS)).willReturn(Optional.empty());
+        given(weatherEntityService.findByLocationAndUnit(geoLocationDto, CELSIUS)).willReturn(Optional.of(weatherDto));
 
-        var result = victim.findByUnitAndHost(unit, host);
+        var result = victim.findByUnitAndHost(CELSIUS, TEST_HOST);
 
         assertEquals(expected, result);
     }
 
     @Test
     void findByUnitAndHost_whenEmptyResponseFromWeatherApi_andNothingInDb_thenThrowBadRequestException() {
-        given(geoLocationApiService.findByHost(host)).willReturn(Optional.of(geoLocationDto));
+        given(geoLocationApiService.findByHost(TEST_HOST)).willReturn(Optional.of(geoLocationDto));
         willDoNothing().given(geoLocationEntityService).saveOrUpdateAsync(geoLocationDto);
-        given(weatherApiService.findByLocationAndUnit(geoLocationDto, unit)).willReturn(Optional.empty());
-        given(weatherEntityService.findByLocationAndUnit(geoLocationDto, unit)).willReturn(Optional.empty());
+        given(weatherApiService.findByLocationAndUnit(geoLocationDto, CELSIUS)).willReturn(Optional.empty());
+        given(weatherEntityService.findByLocationAndUnit(geoLocationDto, CELSIUS)).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> victim.findByUnitAndHost(unit, host))
+        assertThatThrownBy(() -> victim.findByUnitAndHost(CELSIUS, TEST_HOST))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessageContaining(host);
+                .hasMessageContaining(TEST_HOST);
     }
 
 

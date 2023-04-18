@@ -13,8 +13,8 @@ public class TestRedisConfig {
     public TestRedisConfig() {
         this.redisServer = RedisServer.builder()
                 .port(6380)
-                .setting("maxmemory 128M") //maxheap 128M
-                .setting("maxheap 128M") //maxheap 128M
+                .setting("maxmemory 128M")
+                .setting("maxheap 128M")
 
                 .build();
     }
@@ -28,4 +28,5 @@ public class TestRedisConfig {
     public void preDestroy() {
         redisServer.stop();
     }
+
 }
