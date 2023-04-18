@@ -4,6 +4,7 @@ import com.paymentology.weather.exception.BadRequestException;
 import com.paymentology.weather.model.ErrorDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,6 +16,16 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorDto> handleBadRequestException(BadRequestException ex, HttpServletRequest request) {
+        var errorDto = new ErrorDto(HttpStatus.BAD_REQUEST, ex, request);
+        log.info(errorDto.toString());
+
+        return ResponseEntity
+                .badRequest()
+                .body(errorDto);
+    }
+
+    @ExceptionHandler(ConversionFailedException.class)
+    public ResponseEntity<ErrorDto> handleConversionFailedException(ConversionFailedException ex, HttpServletRequest request) {
         var errorDto = new ErrorDto(HttpStatus.BAD_REQUEST, ex, request);
         log.info(errorDto.toString());
 
