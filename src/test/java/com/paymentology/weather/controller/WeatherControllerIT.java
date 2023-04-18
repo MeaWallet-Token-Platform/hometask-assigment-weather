@@ -50,7 +50,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = TestRedisConfig.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-//@ExtendWith(MockitoExtension.class)
 class WeatherControllerIT {
 
     @MockBean
