@@ -1,6 +1,5 @@
 package com.paymentology.weather.controller;
 
-import com.paymentology.weather.constant.TemperatureUnit;
 import com.paymentology.weather.model.WeatherDto;
 import com.paymentology.weather.service.FacadeService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import static com.paymentology.weather.test.uti.TestUtil.TEST_HEADER;
+import static com.paymentology.weather.test.uti.TestUtil.TEST_TEMPERATURE_UNIT;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherDto;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,9 +49,9 @@ class WeatherControllerTest {
     void findByTemperatureUnitAndHost_whenRequest_thenReturnResponse() {
         var expected = ResponseEntity.ok(weatherDto);
         given(requestMock.getHeader(anyString())).willReturn(TEST_HEADER);
-        given(service.findByUnitAndHost(TemperatureUnit.CELSIUS, TEST_HEADER)).willReturn(weatherDto);
+        given(service.findByUnitAndHost(TEST_TEMPERATURE_UNIT, TEST_HEADER)).willReturn(weatherDto);
 
-        var result = victim.findByTemperatureUnitAndHost(TemperatureUnit.CELSIUS, requestMock);
+        var result = victim.findByTemperatureUnitAndHost(TEST_TEMPERATURE_UNIT, requestMock);
 
         assertEquals(expected, result);
     }

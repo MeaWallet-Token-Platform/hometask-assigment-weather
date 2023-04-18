@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.util.Optional;
 
 import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
+import static com.paymentology.weather.test.uti.TestUtil.TEST_TEMPERATURE_UNIT;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationDto;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationEntity;
 import static com.paymentology.weather.test.uti.TestUtil.newOpenMeteoResponseDto;
@@ -60,7 +61,7 @@ class OpenMeteoWeatherServiceTest {
         expandedUrl = "testUrl/" +
                 geoLocationDto.latitude() + "/" +
                 geoLocationDto.longitude() + "/" +
-                CELSIUS.toString().toLowerCase();
+                TEST_TEMPERATURE_UNIT.toLowerCase();
     }
 
     @AfterEach

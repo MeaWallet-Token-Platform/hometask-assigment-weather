@@ -5,6 +5,7 @@ import com.paymentology.weather.exception.BadRequestException;
 import com.paymentology.weather.model.GeoLocationDto;
 import com.paymentology.weather.model.WeatherDto;
 import com.paymentology.weather.util.GeoLocationUtil;
+import com.paymentology.weather.util.TemperatureUnitUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,12 @@ public class FacadeService {
     private final WeatherApiService weatherApiService;
     private final WeatherEntityService weatherEntityService;
     private final GeoLocationUtil geoLocationUtil;
+    private final TemperatureUnitUtil temperatureUnitUtil;
 
 
-    public WeatherDto findByUnitAndHost(TemperatureUnit unit, String requestHost) {
+    public WeatherDto findByUnitAndHost(String unitString, String requestHost) {
+        var unit = temperatureUnitUtil.determineUnit(unitString);
+
         var host = Optional.ofNullable(requestHost)
                 .orElseGet(() -> {
                     log.warn(NO_HOST_PROVIDED);

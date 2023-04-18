@@ -20,7 +20,7 @@ public class WeatherController {
     private final FacadeService service;
 
     @GetMapping
-    public ResponseEntity<WeatherDto> findByTemperatureUnitAndHost(@RequestParam(defaultValue = "CELSIUS") TemperatureUnit unit,
+    public ResponseEntity<WeatherDto> findByTemperatureUnitAndHost(@RequestParam(defaultValue = "CELSIUS") String unit,
                                                                    HttpServletRequest request) {
         var header = request.getHeader(X_FORWARDED_FOR);
         var responseDto = service.findByUnitAndHost(unit, header);
