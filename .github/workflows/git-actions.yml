@@ -2,7 +2,8 @@ name: Weather_2_Job
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - master
 
 permissions:
   contents: read
