@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
+import static com.paymentology.weather.test.uti.TestUtil.TEST_HEADER;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherDto;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherEntity;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,8 +49,8 @@ class WeatherControllerTest {
     @Test
     void findByTemperatureUnitAndHost_whenRequest_thenReturnResponse() {
         var expected = ResponseEntity.ok(weatherDto);
-        given(requestMock.getHeader(anyString())).willReturn("testHeader");
-        given(service.findByUnitAndHost(TemperatureUnit.CELSIUS, "testHeader")).willReturn(weatherDto);
+        given(requestMock.getHeader(anyString())).willReturn(TEST_HEADER);
+        given(service.findByUnitAndHost(TemperatureUnit.CELSIUS, TEST_HEADER)).willReturn(weatherDto);
 
         var result = victim.findByTemperatureUnitAndHost(TemperatureUnit.CELSIUS, requestMock);
 

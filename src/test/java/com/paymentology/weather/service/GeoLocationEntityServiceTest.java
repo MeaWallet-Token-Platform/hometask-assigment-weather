@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static com.paymentology.weather.test.uti.TestUtil.TEST_HOST;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationDto;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationEntity;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -35,7 +36,7 @@ class GeoLocationEntityServiceTest {
         var expected = newGeoLocationDto(entity);
         given(repository.findDtoByHost(any())).willReturn(Optional.of(expected));
 
-        var result = victim.findByHost("host");
+        var result = victim.findByHost(TEST_HOST);
 
         assertNotNull(result);
         assertTrue(result.isPresent());
@@ -47,7 +48,7 @@ class GeoLocationEntityServiceTest {
     void findByHost_whenDoNotExist_thenReturnOptionalEmpty() {
         given(repository.findDtoByHost(any())).willReturn(Optional.empty());
 
-        var result = victim.findByHost("host");
+        var result = victim.findByHost(TEST_HOST);
 
         assertTrue(result.isEmpty());
         verifyNoMoreInteractions(repository, mapper);

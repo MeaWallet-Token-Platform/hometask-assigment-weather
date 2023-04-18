@@ -16,6 +16,11 @@ import org.springframework.web.client.RestTemplate;
 import java.net.InetAddress;
 import java.util.Optional;
 
+import static com.paymentology.weather.test.uti.TestUtil.IP_API_RESPONSE_STATUS_FAIL;
+import static com.paymentology.weather.test.uti.TestUtil.IP_API_RESPONSE_STATUS_SUCCESS;
+import static com.paymentology.weather.test.uti.TestUtil.TEST_HOST;
+import static com.paymentology.weather.test.uti.TestUtil.TEST_IP;
+import static com.paymentology.weather.test.uti.TestUtil.TEST_URL;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationDto;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationEntity;
 import static com.paymentology.weather.test.uti.TestUtil.newIpApiResponseDto;
@@ -29,9 +34,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @ExtendWith(MockitoExtension.class)
 class IpApiGeoLocationServiceTest {
 
-    private String host;
-    private String ip;
-    private String url;
 
     @Mock
     IpApiProperties properties;
@@ -43,12 +45,6 @@ class IpApiGeoLocationServiceTest {
     @InjectMocks
     IpApiGeoLocationService victim;
 
-    @BeforeEach
-    void setUp() {
-        host = "testHost";
-        ip = "ip";
-        url = "url";
-    }
 
     @AfterEach
     void windDown() {
@@ -58,9 +54,9 @@ class IpApiGeoLocationServiceTest {
     @Test
     void findByHost_whenCannotFindAddressFromHost_thenReturnOptionalEmpty() {
         var expected = Optional.empty();
-        given(util.findAddressByHost(host)).willReturn(Optional.empty());
+        given(util.findAddressByHost(TEST_HOST)).willReturn(Optional.empty());
 
-        var result = victim.findByHost(host);
+        var result = victim.findByHost(TEST_HOST);
 
         assertEquals(expected, result);
     }
@@ -69,14 +65,14 @@ class IpApiGeoLocationServiceTest {
     void findByHost_whenRestTemplateThrowsException_thenReturnOptionalEmpty() {
         var expected = Optional.empty();
         var inetAddressMock = mock(InetAddress.class);
-        given(util.findAddressByHost(host)).willReturn(Optional.ofNullable(inetAddressMock));
-        given(inetAddressMock.getHostAddress()).willReturn(ip);
-        given(properties.getUrlJson()).willReturn(url);
+        given(util.findAddressByHost(TEST_HOST)).willReturn(Optional.ofNullable(inetAddressMock));
+        given(inetAddressMock.getHostAddress()).willReturn(TEST_IP);
+        given(properties.getUrlJson()).willReturn(TEST_URL);
 
-        given(restTemplate.getForObject(url, IpApiResponseDto.class, ip))
+        given(restTemplate.getForObject(TEST_URL, IpApiResponseDto.class, TEST_IP))
                 .willThrow(new RestClientException("exceptionMessage"));
 
-        var result = victim.findByHost(host);
+        var result = victim.findByHost(TEST_HOST);
 
         assertEquals(expected, result);
     }
@@ -85,13 +81,13 @@ class IpApiGeoLocationServiceTest {
     void findByHost_whenRestTemplateReturnsNull_thenReturnOptionalEmpty() {
         var expected = Optional.empty();
         var inetAddressMock = mock(InetAddress.class);
-        given(util.findAddressByHost(host)).willReturn(Optional.ofNullable(inetAddressMock));
-        given(inetAddressMock.getHostAddress()).willReturn(ip);
-        given(properties.getUrlJson()).willReturn(url);
+        given(util.findAddressByHost(TEST_HOST)).willReturn(Optional.ofNullable(inetAddressMock));
+        given(inetAddressMock.getHostAddress()).willReturn(TEST_IP);
+        given(properties.getUrlJson()).willReturn(TEST_URL);
 
-        given(restTemplate.getForObject(url, IpApiResponseDto.class, ip)).willReturn(null);
+        given(restTemplate.getForObject(TEST_URL, IpApiResponseDto.class, TEST_IP)).willReturn(null);
 
-        var result = victim.findByHost(host);
+        var result = victim.findByHost(TEST_HOST);
 
         assertEquals(expected, result);
     }
@@ -100,14 +96,14 @@ class IpApiGeoLocationServiceTest {
     void findByHost_whenRestTemplateResponseIsFail_thenReturnOptionalEmpty() {
         var expected = Optional.empty();
         var inetAddressMock = mock(InetAddress.class);
-        var ipApiResponseDto = newIpApiResponseDto("FAIL");
-        given(util.findAddressByHost(host)).willReturn(Optional.ofNullable(inetAddressMock));
-        given(inetAddressMock.getHostAddress()).willReturn(ip);
-        given(properties.getUrlJson()).willReturn(url);
+        var ipApiResponseDto = newIpApiResponseDto(IP_API_RESPONSE_STATUS_FAIL);
+        given(util.findAddressByHost(TEST_HOST)).willReturn(Optional.ofNullable(inetAddressMock));
+        given(inetAddressMock.getHostAddress()).willReturn(TEST_IP);
+        given(properties.getUrlJson()).willReturn(TEST_URL);
 
-        given(restTemplate.getForObject(url, IpApiResponseDto.class, ip)).willReturn(ipApiResponseDto);
+        given(restTemplate.getForObject(TEST_URL, IpApiResponseDto.class, TEST_IP)).willReturn(ipApiResponseDto);
 
-        var result = victim.findByHost(host);
+        var result = victim.findByHost(TEST_HOST);
 
         assertEquals(expected, result);
     }
@@ -116,14 +112,14 @@ class IpApiGeoLocationServiceTest {
     void findByHost_whenPositiveRequest_thenReturnOptionalOf() {
         var expected = Optional.of(newGeoLocationDto(newGeoLocationEntity()));
         var inetAddressMock = mock(InetAddress.class);
-        var ipApiResponseDto = newIpApiResponseDto("SUCCESS");
-        given(util.findAddressByHost(host)).willReturn(Optional.ofNullable(inetAddressMock));
-        given(inetAddressMock.getHostAddress()).willReturn(ip);
-        given(properties.getUrlJson()).willReturn(url);
+        var ipApiResponseDto = newIpApiResponseDto(IP_API_RESPONSE_STATUS_SUCCESS);
+        given(util.findAddressByHost(TEST_HOST)).willReturn(Optional.ofNullable(inetAddressMock));
+        given(inetAddressMock.getHostAddress()).willReturn(TEST_IP);
+        given(properties.getUrlJson()).willReturn(TEST_URL);
 
-        given(restTemplate.getForObject(url, IpApiResponseDto.class, ip)).willReturn(ipApiResponseDto);
+        given(restTemplate.getForObject(TEST_URL, IpApiResponseDto.class, TEST_IP)).willReturn(ipApiResponseDto);
 
-        var result = victim.findByHost(host);
+        var result = victim.findByHost(TEST_HOST);
 
         assertEquals(expected, result);
     }
