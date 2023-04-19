@@ -24,16 +24,6 @@ public class CustomExceptionHandler {
                 .body(errorDto);
     }
 
-    @ExceptionHandler(ConversionFailedException.class)
-    public ResponseEntity<ErrorDto> handleConversionFailedException(ConversionFailedException ex, HttpServletRequest request) {
-        var errorDto = new ErrorDto(HttpStatus.BAD_REQUEST, ex, request);
-        log.info(errorDto.toString());
-
-        return ResponseEntity
-                .badRequest()
-                .body(errorDto);
-    }
-
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorDto> handleRuntimeException(RuntimeException ex, HttpServletRequest request) {
         ex.printStackTrace();
