@@ -33,16 +33,9 @@ public class WeatherEntityService {
     @Cacheable(value = "weatherCache", key = "#geoLocationDto.host + #unit")
     public Optional<WeatherDto> findByLocationAndUnit(GeoLocationDto geoLocationDto, TemperatureUnit unit) {
         var id = geoLocationDto.host() + unit;
-        var entityOptional = repository.findById(id);
-
-        if (entityOptional.isPresent()) {
-            var entity = entityOptional.get();
-            log.info(WEATHER_ENTITY_FOUND_WITH_ID + entity.getId());
-            var responseDto = mapper.entityToDto(entity);
-            return Optional.of(responseDto);
-        }
-
-        return Optional.empty();
+        var weatherDtoOptional = repository.findDtoById(id);
+        weatherDtoOptional.ifPresent(weatherDto -> log.info(WEATHER_ENTITY_FOUND_WITH_ID + weatherDto.host()));
+        return weatherDtoOptional;
     }
 
     @Async
