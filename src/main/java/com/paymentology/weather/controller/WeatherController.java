@@ -1,6 +1,5 @@
 package com.paymentology.weather.controller;
 
-import com.paymentology.weather.constant.TemperatureUnit;
 import com.paymentology.weather.model.WeatherDto;
 import com.paymentology.weather.service.FacadeService;
 import jakarta.servlet.http.HttpServletRequest;
