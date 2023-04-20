@@ -16,6 +16,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
 
+import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
+import static com.paymentology.weather.constant.TemperatureUnit.KELVIN;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,6 +31,11 @@ public class OpenMeteoWeatherService implements WeatherApiService {
 
     @Override
     public Optional<WeatherDto> findByLocationAndUnit(GeoLocationDto geoLocation, TemperatureUnit unit) {
+        if (KELVIN.equals(unit)) {
+            log.warn("Unsupported temperature unit. Replaced with CELSIUS");
+            unit = CELSIUS;
+        }
+
         var uri = UriComponentsBuilder
                 .fromUriString(properties.getCurrentWeatherUrl())
                 .buildAndExpand(
