@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.util.Optional;
 
 import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
+import static com.paymentology.weather.constant.TemperatureUnit.KELVIN;
 import static com.paymentology.weather.test.uti.TestUtil.TEST_TEMPERATURE_UNIT;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationDto;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationEntity;
@@ -77,6 +78,18 @@ class OpenMeteoWeatherServiceTest {
         given(restTemplate.getForObject(uri, OpenMeteoResponseDto.class)).willReturn(null);
 
         var result = victim.findByLocationAndUnit(geoLocationDto, CELSIUS);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void findByLocationAndUnit_whenTemperatureUnitKelvin_thenChangeToCelsius() throws URISyntaxException {
+        var expected = Optional.empty();
+        var uri = new URI(expandedUrl);
+        given(properties.getCurrentWeatherUrl()).willReturn(url);
+        given(restTemplate.getForObject(uri, OpenMeteoResponseDto.class)).willReturn(null);
+
+        var result = victim.findByLocationAndUnit(geoLocationDto, KELVIN);
 
         assertEquals(expected, result);
     }

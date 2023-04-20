@@ -95,7 +95,7 @@ class WeatherControllerIT {
         assertEquals(geoLocationOne, geoLocationTwo);
         assertEquals(weatherOne, weatherTwo);
         verify(geoLocationRepository, times(1)).findDtoByHost(TEST_HOST);
-        verify(weatherRepository, times(1)).findById(weatherDto.host());
+        verify(weatherRepository, times(1)).findDtoById(weatherDto.host());
     }
 
     @Test
@@ -112,7 +112,7 @@ class WeatherControllerIT {
         weatherEntityService.findByLocationAndUnit(geoLocationDto, CELSIUS);
 
         verify(geoLocationRepository, times(2)).findDtoByHost(TEST_HOST);
-        verify(weatherRepository, times(2)).findById(weatherDto.host());
+        verify(weatherRepository, times(2)).findDtoById(weatherDto.host());
     }
 
     @Test

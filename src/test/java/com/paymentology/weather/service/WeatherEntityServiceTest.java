@@ -39,9 +39,7 @@ class WeatherEntityServiceTest {
         var entity = newWeatherEntity();
         var expected = newWeatherDto(entity);
         var geoLocationDto = newGeoLocationDto(newGeoLocationEntity());
-        when(repository.findById(geoLocationDto.host() + CELSIUS)).thenReturn(Optional.of(entity));
-        when(mapper.entityToDto(entity)).thenReturn(expected);
-
+        when(repository.findDtoById(geoLocationDto.host() + CELSIUS)).thenReturn(Optional.of(expected));
         var resultOptional = victim.findByLocationAndUnit(geoLocationDto, CELSIUS);
 
         assertTrue(resultOptional.isPresent());
@@ -52,7 +50,7 @@ class WeatherEntityServiceTest {
 
     @Test
     void findByLocationAndUnit_whenDoNotExists_thenReturnOptionalEmpty() {
-        when(repository.findById(any())).thenReturn(Optional.empty());
+        when(repository.findDtoById(any())).thenReturn(Optional.empty());
 
         var resultOptional = victim
                 .findByLocationAndUnit(newGeoLocationDto(newGeoLocationEntity()), CELSIUS);
