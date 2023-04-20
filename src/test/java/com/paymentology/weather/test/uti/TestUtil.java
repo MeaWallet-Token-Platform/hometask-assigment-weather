@@ -55,7 +55,7 @@ public class TestUtil {
 
     public static GeoLocationEntity newGeoLocationEntity() {
         return new GeoLocationEntity()
-                .setId("testHost")
+                .setId(TEST_HOST)
                 .setLatitude(255.5)
                 .setLongitude(255.5);
     }
@@ -64,18 +64,18 @@ public class TestUtil {
         return new GeoLocationDto(entity.getId(), entity.getLatitude(), entity.getLongitude());
     }
 
-    public static WeatherDto newWeatherDto(WeatherEntity entity) {
-        return new WeatherDto(entity.getId(), newTemperatureDto(), newWindDto(), entity.getCreated());
-    }
-
     public static WeatherEntity newWeatherEntity() {
         return new WeatherEntity()
-                .setId("testHostCELSIUS")
+                .setId(TEST_HOST + CELSIUS)
                 .setCreated(Clock.systemUTC().instant())
                 .setTemperature(25.5)
                 .setTemperatureUnit(CELSIUS)
                 .setWindSpeed(25.5)
                 .setWindDirection(25.5);
+    }
+
+    public static WeatherDto newWeatherDto(WeatherEntity entity) {
+        return new WeatherDto(entity.getId(), newTemperatureDto(), newWindDto(), entity.getCreated());
     }
 
     public static IpApiResponseDto newIpApiResponseDto(String status) {

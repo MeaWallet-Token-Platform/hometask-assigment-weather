@@ -11,6 +11,9 @@ import static com.paymentology.weather.constant.TemperatureUnit.KELVIN;
 public class TemperatureUnitUtil {
 
     public TemperatureUnit determineUnit(String unitString) {
+        if (unitString == null) {
+            return CELSIUS;
+        }
 
         return switch (unitString) {
             case String unit && KELVIN.toString().equalsIgnoreCase(unit) -> KELVIN;
