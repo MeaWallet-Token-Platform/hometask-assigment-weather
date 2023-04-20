@@ -34,6 +34,19 @@ dependencies {
 
 }
 
+var preview = '--enable-preview'
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += preview
+}
+
+tasks.withType(Test).configureEach {
+    jvmArgs += preview
+}
+
+tasks.withType(JavaExec).configureEach {
+    jvmArgs += preview
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }

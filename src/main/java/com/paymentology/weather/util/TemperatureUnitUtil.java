@@ -12,13 +12,11 @@ public class TemperatureUnitUtil {
 
     public TemperatureUnit determineUnit(String unitString) {
 
-        if (FAHRENHEIT.toString().equalsIgnoreCase(unitString)) {
-            return FAHRENHEIT;
-        } else if (KELVIN.toString().equalsIgnoreCase(unitString)) {
-            return KELVIN;
-        } else {
-            return CELSIUS;
-        }
+        return switch (unitString) {
+            case String unit && KELVIN.toString().equalsIgnoreCase(unit) -> KELVIN;
+            case String unit && FAHRENHEIT.toString().equalsIgnoreCase(unit) -> FAHRENHEIT;
+            default -> CELSIUS;
+        };
 
     }
 
