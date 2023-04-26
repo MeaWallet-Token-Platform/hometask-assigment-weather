@@ -1,5 +1,6 @@
 package com.paymentology.weather.service.impl;
 
+import com.paymentology.weather.RestTemplateService;
 import com.paymentology.weather.constant.TemperatureUnit;
 import com.paymentology.weather.model.GeoLocationDto;
 import com.paymentology.weather.model.OpenMeteoResponseDto;
@@ -10,14 +11,8 @@ import com.paymentology.weather.util.WeatherUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
-
-import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
-import static com.paymentology.weather.constant.TemperatureUnit.KELVIN;
 
 @Service
 @RequiredArgsConstructor
@@ -26,40 +21,32 @@ public class OpenMeteoWeatherService implements WeatherApiService {
 
 
     private final OpenMeteoProperties properties;
-    private final RestTemplate restTemplate;
+    private final RestTemplateService<OpenMeteoResponseDto> restTemplateService;
     private final WeatherUtil weatherUtil;
 
+
     @Override
-    public Optional<WeatherDto> findByLocationAndUnit(GeoLocationDto geoLocation, TemperatureUnit unit) {
-        if (KELVIN.equals(unit)) {
-            log.warn("Unsupported temperature unit. Replaced with CELSIUS");
-            unit = CELSIUS;
-        }
+    public Optional<WeatherDto> findByLocationAndUnit(GeoLocationDto geoLocation, TemperatureUnit requestUnit) {
+        var apiUnit = weatherUtil.getApiUnit(requestUnit);
 
-        var uri = UriComponentsBuilder
-                .fromUriString(properties.getCurrentWeatherUrl())
-                .buildAndExpand(
-                        geoLocation.latitude(),
-                        geoLocation.longitude(),
-                        unit.toString().toLowerCase())
-                .toUri();
+        var uri = weatherUtil.getCurrentWeatherUri(geoLocation, apiUnit, properties.getCurrentWeatherUrl());
 
-        try {
-            var openMeteoResponseDto = restTemplate.getForObject(uri, OpenMeteoResponseDto.class);
+/*        var openMeteoResponseDtoOptional = restTemplateService
+                .getForObject(uri, OpenMeteoResponseDto.class);
 
-            if (openMeteoResponseDto == null) {
-                return Optional.empty();
-            }
-
-            var weatherResponseDto = weatherUtil.createResponseDto(openMeteoResponseDto, geoLocation, unit);
-
-            return Optional.of(weatherResponseDto);
-
-        } catch (RestClientException ex) {
-            log.warn(this.getClass().getSimpleName() + " caught exception: " + ex);
+        if (openMeteoResponseDtoOptional.isEmpty()) {
             return Optional.empty();
         }
 
+        var openMeteoResponseDto = openMeteoResponseDtoOptional.get();
+
+        weatherUtil.applyKelvinLogic(requestUnit, openMeteoResponseDto);
+
+        return weatherUtil.createWeatherDto(openMeteoResponseDto, geoLocation, requestUnit);*/
+
+        return restTemplateService.getForObject(uri, OpenMeteoResponseDto.class)
+                .flatMap(dto -> weatherUtil.applyKelvinLogic(requestUnit, dto))
+                .flatMap(dto -> weatherUtil.createWeatherDto(dto, geoLocation, requestUnit));
     }
 
 }

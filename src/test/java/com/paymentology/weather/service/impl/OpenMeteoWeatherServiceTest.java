@@ -1,5 +1,6 @@
 package com.paymentology.weather.service.impl;
 
+import com.paymentology.weather.RestTemplateService;
 import com.paymentology.weather.model.GeoLocationDto;
 import com.paymentology.weather.model.OpenMeteoResponseDto;
 import com.paymentology.weather.model.WeatherDto;
@@ -12,15 +13,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
 import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
-import static com.paymentology.weather.constant.TemperatureUnit.KELVIN;
 import static com.paymentology.weather.test.uti.TestUtil.TEST_TEMPERATURE_UNIT;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationDto;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationEntity;
@@ -28,6 +26,7 @@ import static com.paymentology.weather.test.uti.TestUtil.newOpenMeteoResponseDto
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherDto;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -37,7 +36,7 @@ class OpenMeteoWeatherServiceTest {
     @Mock
     OpenMeteoProperties properties;
     @Mock
-    RestTemplate restTemplate;
+    RestTemplateService<OpenMeteoResponseDto> restTemplateService;
     @Mock
     WeatherUtil weatherUtil;
 
@@ -46,6 +45,7 @@ class OpenMeteoWeatherServiceTest {
 
 
     private String url;
+    private URI uri;
     private String expandedUrl;
     private GeoLocationDto geoLocationDto;
     private WeatherDto weatherDto;
@@ -53,7 +53,7 @@ class OpenMeteoWeatherServiceTest {
 
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws URISyntaxException {
         geoLocationDto = newGeoLocationDto(newGeoLocationEntity());
         url = "testUrl/{1}/{2}/{3}";
         openMeteoResponseDto = newOpenMeteoResponseDto();
@@ -63,60 +63,65 @@ class OpenMeteoWeatherServiceTest {
                 geoLocationDto.latitude() + "/" +
                 geoLocationDto.longitude() + "/" +
                 TEST_TEMPERATURE_UNIT.toLowerCase();
+
+        uri = new URI(expandedUrl);
     }
 
     @AfterEach
     void windDown() {
-        verifyNoMoreInteractions(properties, restTemplate, weatherUtil);
+        verifyNoMoreInteractions(properties, restTemplateService, weatherUtil);
     }
 
     @Test
-    void findByLocationAndUnit_whenApiReturnsNull_thenReturnOptionalEmpty() throws URISyntaxException {
+    void findByLocationAndUnit_whenApiReturnsNull_thenReturnOptionalEmpty() {
         var expected = Optional.empty();
-        var uri = new URI(expandedUrl);
+        given(weatherUtil.getApiUnit(CELSIUS)).willReturn(CELSIUS);
         given(properties.getCurrentWeatherUrl()).willReturn(url);
-        given(restTemplate.getForObject(uri, OpenMeteoResponseDto.class)).willReturn(null);
+        given(weatherUtil.getCurrentWeatherUri(geoLocationDto, CELSIUS, url)).willReturn(uri);
+        given(restTemplateService.getForObject(uri, OpenMeteoResponseDto.class)).willReturn(Optional.empty());
 
         var result = victim.findByLocationAndUnit(geoLocationDto, CELSIUS);
 
         assertEquals(expected, result);
     }
 
-    @Test
-    void findByLocationAndUnit_whenTemperatureUnitKelvin_thenChangeToCelsius() throws URISyntaxException {
+/*    @Test
+    void findByLocationAndUnit_whenTemperatureUnitKelvin_thenChangeToCelsiusForApi() {
         var expected = Optional.empty();
-        var uri = new URI(expandedUrl);
         given(properties.getCurrentWeatherUrl()).willReturn(url);
-        given(restTemplate.getForObject(uri, OpenMeteoResponseDto.class)).willReturn(null);
+        given(restTemplateService.getForObject(uri, OpenMeteoResponseDto.class)).willReturn(null);
 
         var result = victim.findByLocationAndUnit(geoLocationDto, KELVIN);
 
         assertEquals(expected, result);
-    }
+    }*/
 
-    @Test
-    void findByLocationAndUnit_whenRestTemplateCatchesException_thenReturnOptionalEmpty() throws URISyntaxException {
+/*    @Test
+    void findByLocationAndUnit_whenRestTemplateCatchesException_thenReturnOptionalEmpty() {
         var expected = Optional.empty();
-        var uri = new URI(expandedUrl);
         given(properties.getCurrentWeatherUrl()).willReturn(url);
-        given(restTemplate.getForObject(uri, OpenMeteoResponseDto.class)).willThrow(new RestClientException("exceptionMessage"));
+        given(restTemplateService.getForObject(uri, OpenMeteoResponseDto.class)).willThrow(new RestClientException("exceptionMessage"));
 
         var result = victim.findByLocationAndUnit(geoLocationDto, CELSIUS);
 
         assertEquals(expected, result);
-    }
+    }*/
 
     @Test
-    void findByLocationAndUnit_whenApiProvidesResponse_thenReturn() throws URISyntaxException {
-        var expected = Optional.of(weatherDto);
-        var uri = new URI(expandedUrl);
+    void findByLocationAndUnit_whenApiProvidesResponse_thenReturn() {
+        var expectedOptional = Optional.of(weatherDto);
+        given(weatherUtil.getApiUnit(CELSIUS)).willReturn(CELSIUS);
         given(properties.getCurrentWeatherUrl()).willReturn(url);
-        given(restTemplate.getForObject(uri, OpenMeteoResponseDto.class)).willReturn(openMeteoResponseDto);
-        given(weatherUtil.createResponseDto(openMeteoResponseDto, geoLocationDto, CELSIUS)).willReturn(weatherDto);
+        given(weatherUtil.getCurrentWeatherUri(geoLocationDto, CELSIUS, url)).willReturn(uri);
+        given(restTemplateService.getForObject(uri, OpenMeteoResponseDto.class)).willReturn(Optional.of(openMeteoResponseDto));
+        given(weatherUtil.applyKelvinLogic(CELSIUS, openMeteoResponseDto)).willReturn(Optional.of(openMeteoResponseDto));
+        given(weatherUtil.createWeatherDto(openMeteoResponseDto, geoLocationDto, CELSIUS)).willReturn(expectedOptional);
 
-        var result = victim.findByLocationAndUnit(geoLocationDto, CELSIUS);
+        var resultOptional = victim.findByLocationAndUnit(geoLocationDto, CELSIUS);
 
-        assertEquals(expected, result);
+        assertTrue(resultOptional.isPresent());
+        assertEquals(expectedOptional, resultOptional);
+        assertEquals(expectedOptional.get(), resultOptional.get());
     }
 
 

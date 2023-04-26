@@ -14,6 +14,7 @@ import static com.paymentology.weather.test.uti.TestUtil.newWeatherEntity;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class WeatherUtilTest {
@@ -25,8 +26,10 @@ class WeatherUtilTest {
     void createResponseDto_whenValidRequest_thenReturnResponseDto() {
         var expected = newWeatherDto(newWeatherEntity());
 
-        var result = victim.createResponseDto(newOpenMeteoResponseDto(), newGeoLocationDto(newGeoLocationEntity()), CELSIUS);
+        var resultOptional = victim.createWeatherDto(newOpenMeteoResponseDto(), newGeoLocationDto(newGeoLocationEntity()), CELSIUS);
 
+        assertTrue(resultOptional.isPresent());
+        var result = resultOptional.get();
         assertEquals(expected.host(), result.host());
         assertEquals(expected.temperature(), result.temperature());
         assertEquals(expected.wind(), result.wind());
@@ -37,7 +40,7 @@ class WeatherUtilTest {
     void createResponseDto_whenOpenMeteoResponseDtoIsNull_thenThrowNullPointerException() {
         var geoLocationDto = newGeoLocationDto(newGeoLocationEntity());
 
-        assertThatThrownBy(() -> victim.createResponseDto(null, geoLocationDto, CELSIUS))
+        assertThatThrownBy(() -> victim.createWeatherDto(null, geoLocationDto, CELSIUS))
                 .isInstanceOf(NullPointerException.class);
     }
 
@@ -45,7 +48,7 @@ class WeatherUtilTest {
     void createResponseDto_whenGeoLocationDtoIsNull_thenThrowNullPointerException() {
         var openMeteoResponseDto = newOpenMeteoResponseDto();
 
-        assertThatThrownBy(() -> victim.createResponseDto(openMeteoResponseDto, null, CELSIUS))
+        assertThatThrownBy(() -> victim.createWeatherDto(openMeteoResponseDto, null, CELSIUS))
                 .isInstanceOf(NullPointerException.class);
     }
 
