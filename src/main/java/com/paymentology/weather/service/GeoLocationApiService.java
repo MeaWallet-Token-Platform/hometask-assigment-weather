@@ -6,7 +6,6 @@ import java.util.Optional;
 
 public interface GeoLocationApiService {
 
-    Optional<GeoLocationDto> findByHost(String host);
-
+   Optional<GeoLocationDto> findByHost(String host);
 
 }
