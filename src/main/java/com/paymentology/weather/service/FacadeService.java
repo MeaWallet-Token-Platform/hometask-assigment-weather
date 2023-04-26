@@ -1,6 +1,5 @@
 package com.paymentology.weather.service;
 
-import com.paymentology.weather.constant.TemperatureUnit;
 import com.paymentology.weather.exception.BadRequestException;
 import com.paymentology.weather.model.GeoLocationDto;
 import com.paymentology.weather.model.WeatherDto;
