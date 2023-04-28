@@ -1,19 +1,19 @@
 package com.paymentology.weather.test.uti;
 
-import com.paymentology.weather.model.ClientApiKeyDto;
-import com.paymentology.weather.model.GeoLocationDto;
-import com.paymentology.weather.model.IpApiResponseDto;
-import com.paymentology.weather.model.OpenMeteoResponseDto;
-import com.paymentology.weather.model.TemperatureDto;
-import com.paymentology.weather.model.WeatherDto;
-import com.paymentology.weather.model.WindDto;
-import com.paymentology.weather.repository.entity.ClientApiKeyEntity;
-import com.paymentology.weather.repository.entity.GeoLocationEntity;
-import com.paymentology.weather.repository.entity.WeatherEntity;
+import com.paymentology.weather.core.model.ClientApiKeyDto;
+import com.paymentology.weather.core.model.GeoLocationDto;
+import com.paymentology.weather.infrastructure.api.ipapi.IpApiResponseDto;
+import com.paymentology.weather.infrastructure.api.openmeteo.OpenMeteoResponseDto;
+import com.paymentology.weather.core.model.TemperatureDto;
+import com.paymentology.weather.core.model.WeatherDto;
+import com.paymentology.weather.core.model.WindDto;
+import com.paymentology.weather.core.repository.entity.ClientApiKeyEntity;
+import com.paymentology.weather.core.repository.entity.GeoLocationEntity;
+import com.paymentology.weather.core.repository.entity.WeatherEntity;
 
 import java.time.Clock;
 
-import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
+import static com.paymentology.weather.core.constant.TemperatureUnit.CELSIUS;
 
 public class TestUtil {
 

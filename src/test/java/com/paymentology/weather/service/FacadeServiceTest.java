@@ -1,10 +1,15 @@
 package com.paymentology.weather.service;
 
-import com.paymentology.weather.exception.BadRequestException;
-import com.paymentology.weather.model.GeoLocationDto;
-import com.paymentology.weather.model.WeatherDto;
-import com.paymentology.weather.util.GeoLocationUtil;
-import com.paymentology.weather.util.TemperatureUnitUtil;
+import com.paymentology.weather.core.service.FacadeService;
+import com.paymentology.weather.core.service.GeoLocationApiService;
+import com.paymentology.weather.core.service.GeoLocationEntityService;
+import com.paymentology.weather.core.service.WeatherApiService;
+import com.paymentology.weather.core.service.WeatherEntityService;
+import com.paymentology.weather.infrastructure.exception.BadRequestException;
+import com.paymentology.weather.core.model.GeoLocationDto;
+import com.paymentology.weather.core.model.WeatherDto;
+import com.paymentology.weather.core.util.GeoLocationUtil;
+import com.paymentology.weather.core.util.TemperatureUnitUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
-import static com.paymentology.weather.service.FacadeService.STANDARD_HOST;
+import static com.paymentology.weather.core.constant.TemperatureUnit.CELSIUS;
+import static com.paymentology.weather.core.service.FacadeService.STANDARD_HOST;
 import static com.paymentology.weather.test.uti.TestUtil.TEST_HOST;
 import static com.paymentology.weather.test.uti.TestUtil.TEST_TEMPERATURE_UNIT;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationDto;

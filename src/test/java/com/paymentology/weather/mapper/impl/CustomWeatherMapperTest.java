@@ -1,7 +1,8 @@
 package com.paymentology.weather.mapper.impl;
 
-import com.paymentology.weather.model.WeatherDto;
-import com.paymentology.weather.repository.entity.WeatherEntity;
+import com.paymentology.weather.core.mapper.impl.CustomWeatherMapper;
+import com.paymentology.weather.core.model.WeatherDto;
+import com.paymentology.weather.core.repository.entity.WeatherEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

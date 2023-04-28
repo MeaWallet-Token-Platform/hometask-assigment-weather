@@ -1,11 +1,12 @@
 package com.paymentology.weather.util;
 
+import com.paymentology.weather.infrastructure.api.openmeteo.WeatherUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
+import static com.paymentology.weather.core.constant.TemperatureUnit.CELSIUS;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationDto;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationEntity;
 import static com.paymentology.weather.test.uti.TestUtil.newOpenMeteoResponseDto;
@@ -26,10 +27,8 @@ class WeatherUtilTest {
     void createResponseDto_whenValidRequest_thenReturnResponseDto() {
         var expected = newWeatherDto(newWeatherEntity());
 
-        var resultOptional = victim.createWeatherDto(newOpenMeteoResponseDto(), newGeoLocationDto(newGeoLocationEntity()), CELSIUS);
+        var result = victim.createWeatherDto(newOpenMeteoResponseDto(), newGeoLocationDto(newGeoLocationEntity()), CELSIUS);
 
-        assertTrue(resultOptional.isPresent());
-        var result = resultOptional.get();
         assertEquals(expected.host(), result.host());
         assertEquals(expected.temperature(), result.temperature());
         assertEquals(expected.wind(), result.wind());

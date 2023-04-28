@@ -1,7 +1,8 @@
 package com.paymentology.weather.service;
 
-import com.paymentology.weather.mapper.GeoLocationMapper;
-import com.paymentology.weather.repository.GeoLocationRepository;
+import com.paymentology.weather.core.mapper.GeoLocationMapper;
+import com.paymentology.weather.core.service.GeoLocationEntityService;
+import com.paymentology.weather.core.repository.GeoLocationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

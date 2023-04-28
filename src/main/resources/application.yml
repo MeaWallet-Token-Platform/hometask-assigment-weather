@@ -43,3 +43,6 @@ connection:
   connection-keep-alive: ${HTTP_KEEP_ALIVE:60000}
   connection-timeout: ${HTTP_CONNECTION_TIMEOUT:1000}
   response-timeout: ${HTTP_RESPONSE_TIMEOUT:1000}
+
+cache:
+  ttl: ${CACHE_TTL:60}

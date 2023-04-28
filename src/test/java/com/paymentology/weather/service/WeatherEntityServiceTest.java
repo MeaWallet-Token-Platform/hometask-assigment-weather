@@ -1,7 +1,8 @@
 package com.paymentology.weather.service;
 
-import com.paymentology.weather.mapper.WeatherMapper;
-import com.paymentology.weather.repository.WeatherRepository;
+import com.paymentology.weather.core.mapper.WeatherMapper;
+import com.paymentology.weather.core.service.WeatherEntityService;
+import com.paymentology.weather.core.repository.WeatherRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.paymentology.weather.constant.TemperatureUnit.CELSIUS;
+import static com.paymentology.weather.core.constant.TemperatureUnit.CELSIUS;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationDto;
 import static com.paymentology.weather.test.uti.TestUtil.newGeoLocationEntity;
 import static com.paymentology.weather.test.uti.TestUtil.newWeatherDto;

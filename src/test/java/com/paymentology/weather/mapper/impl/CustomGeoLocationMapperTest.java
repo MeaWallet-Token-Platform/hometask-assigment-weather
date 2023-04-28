@@ -1,7 +1,8 @@
 package com.paymentology.weather.mapper.impl;
 
-import com.paymentology.weather.model.GeoLocationDto;
-import com.paymentology.weather.repository.entity.GeoLocationEntity;
+import com.paymentology.weather.core.mapper.impl.CustomGeoLocationMapper;
+import com.paymentology.weather.core.model.GeoLocationDto;
+import com.paymentology.weather.core.repository.entity.GeoLocationEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
