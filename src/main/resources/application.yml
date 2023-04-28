@@ -1,12 +1,48 @@
 spring:
+  application:
+    name: weather-service
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost/weather
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5433}/${POSTGRES_DATABASE:weather}?createDatabaseIfNotExist=true
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
   liquibase:
     change-log: classpath:db/master.xml
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      repositories:
+        enabled: false
+
+
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:info}
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: ${LOGGING_LEVEL_WEB:debug}
+
 ip-api:
-  url: http://ip-api.com/json
+  base-url: http://ip-api.com
+  url-json: ${ip-api.base-url}/json/{ip}
 open-meteo:
-  url: https://api.open-meteo.com/v1/forecast/
+  base-url: https://api.open-meteo.com/v1/forecast
+  current-weather-url: ${open-meteo.base-url}/?latitude={latitude}&longitude={longitude}&current_weather=true&temperature_unit={unit}
+
+connection:
+  max-total-connections: ${HTTP_MAX_TOTAL_CONNECTIONS:50}
+  max-connections-per-route-default: ${HTTP_MAX_CONNECTIONS_PER_ROUTE:20}
+  connection-request-timeout: ${HTTP_REQUEST_TIMEOUT:5000}
+  connection-keep-alive: ${HTTP_KEEP_ALIVE:60000}
+  connection-timeout: ${HTTP_CONNECTION_TIMEOUT:1000}
+  response-timeout: ${HTTP_RESPONSE_TIMEOUT:1000}
+
+cache:
+  ttl: ${CACHE_TTL:60}

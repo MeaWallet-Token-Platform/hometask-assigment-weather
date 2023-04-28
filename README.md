@@ -14,26 +14,26 @@ The server-side application communicates with two third-party services:
 The application is deployed in two instances.
 Both instances share a single database.
 * Environment (per instance):
-  * CPU = 2 cores
-  * RAM = 1GB
+    * CPU = 2 cores
+    * RAM = 1GB
 * Tech stack:
-  * Java 17
-  * Sping boot 3
-  * PostgreSQL
-  * Liquibase
+    * Java 17
+    * Sping boot 3
+    * PostgreSQL
+    * Liquibase
 
 ### Problem:
-Our Junior Developer created the server-side application, and it has some drawbacks. 
+Our Junior Developer created the server-side application, and it has some drawbacks.
 Also, this morning we discovered that many calls to Open Meteo are failing with errors.
 It has become very slow, inconsistent, and unreliable. Request times are unpredictable, and it fails with 5xx errors from time to time
-We don't know what the problem is, possibly even with our proxy server. 
+We don't know what the problem is, possibly even with our proxy server.
 
 But the DevOps team cannot help us in the next few days. We need a quick fix so that users don't suffer. The team discussed and decided to add caching for successful responses. When a request to Open Meteo fails with an error, we simply return the last saved result. At least this will reduce the number of errors.
 
 ### Conditions:
-Without the DevOps team, we do not have access to the infrastructure. 
+Without the DevOps team, we do not have access to the infrastructure.
 
-The problem must be solved in the existing environment. 
+The problem must be solved in the existing environment.
 
 You can change the code as you like, use any libraries, and use the existing database.
 
@@ -66,10 +66,10 @@ Example:
 
 ### How to make request
 1. GET http://localhost:8080/weather
-2. Request should contain 2 headers: 
-   * X-Forwarded-For (your external IP address)
-   * X-API-KEY (auth api key, default = `M2ZjNDZmOWItMzJmMC00YzhlLWE3ZTctNDY3YzQ2YzAzZjli`)
-Example:
+2. Request should contain 2 headers:
+    * X-Forwarded-For (your external IP address)
+    * X-API-KEY (auth api key, default = `M2ZjNDZmOWItMzJmMC00YzhlLWE3ZTctNDY3YzQ2YzAzZjli`)
+      Example:
 ```
 curl --location 'http://localhost:8080/weather' \
 --header 'X-Forwarded-For: 81.198.20.21' \
