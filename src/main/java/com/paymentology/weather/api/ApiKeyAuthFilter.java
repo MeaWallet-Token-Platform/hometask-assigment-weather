@@ -1,4 +1,4 @@
-package com.paymentology.weather.infra.http;
+package com.paymentology.weather.api;
 
 import com.paymentology.weather.domain.client.ClientKeyRepository;
 import jakarta.servlet.*;
@@ -26,7 +26,7 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
         if (permit(request)) {
             filterChain.doFilter(request, response);
         } else {
-            response.sendError(403);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 

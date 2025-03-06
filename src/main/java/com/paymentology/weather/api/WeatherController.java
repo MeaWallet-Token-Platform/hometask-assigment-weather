@@ -1,9 +1,9 @@
-package com.paymentology.weather.infra.http;
+package com.paymentology.weather.api;
 
 import com.paymentology.weather.domain.location.GeoLocationService;
 import com.paymentology.weather.domain.weather.WeatherService;
-import com.paymentology.weather.domain.weather.model.Weather;
-import com.paymentology.weather.domain.weather.model.TemperatureUnit;
+import com.paymentology.weather.domain.weather.Weather;
+import com.paymentology.weather.domain.weather.TemperatureUnit;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,23 +16,22 @@ import java.util.Optional;
 @RestController
 public class WeatherController {
 
-    @Autowired
-    private WeatherService weatherService;
+    private final WeatherService weatherService;
+    private final GeoLocationService geoLocationService;
 
     @Autowired
-    private GeoLocationService geoLocationService;
+    public WeatherController(WeatherService weatherService, GeoLocationService geoLocationService) {
+        this.weatherService = weatherService;
+        this.geoLocationService = geoLocationService;
+    }
 
     @GetMapping(path = "/weather")
     public Optional<Weather> get(@RequestParam(name = "unit", defaultValue = "celsius") String tempUnit, HttpServletRequest rqt) throws Throwable {
-        var unit = tempUnit.equalsIgnoreCase("Celsius")
-                ? TemperatureUnit.Celsius
-                : tempUnit.equalsIgnoreCase("Fahrenheit")
-                ? TemperatureUnit.Fahrenheit
-                : TemperatureUnit.Kelvin;
+        var unit = TemperatureUnit.getByQueryParam(tempUnit);
         return Optional
                 .ofNullable(rqt.getHeader("X-Forwarded-For"))
                 .flatMap(this::resolve)
-                .flatMap(ip -> geoLocationService.detectByIp(ip))
+                .flatMap(geoLocationService::detectByIp)
                 .map(l -> weatherService.get(l, unit));
     }
 
@@ -40,7 +39,7 @@ public class WeatherController {
         try {
             var a = InetAddress.getByName(ip);
             return Optional.of(a);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return Optional.empty();
         }
     }

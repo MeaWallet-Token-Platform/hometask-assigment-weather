@@ -6,7 +6,20 @@ spring:
     password: postgres
   liquibase:
     change-log: classpath:db/master.xml
+
+# API
+api:
+  connect-timeout-duration: PT2S
+  read-timeout-duration: PT2S
+
+cache:
+  geo-location:
+    ttl-minutes: 1440 # 24h - probably this should be set to something different
+  weather:
+    ttl-minutes: 20 # starting point. although it is still possible for weather data to change dramatically within 20 minutes
+
+# Integrations
 ip-api:
   url: http://ip-api.com/json
 open-meteo:
-  url: https://api.open-meteo.com/v1/forecast/
+  url: https://api.open-meteo.com/v1/forecast

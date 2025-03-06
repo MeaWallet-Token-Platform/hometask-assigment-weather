@@ -1,4 +1,4 @@
-package com.paymentology.weather.infra.http;
+package com.paymentology.weather.api;
 
 import com.paymentology.weather.domain.client.ClientApiKey;
 import com.paymentology.weather.domain.client.ClientKeyRepository;
@@ -13,7 +13,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)

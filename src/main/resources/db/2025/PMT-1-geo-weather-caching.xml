@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="AnatolyT" id="PMT-1-geo-locations">
+        <createTable tableName="geo_locations_cache">
+            <column name="ip_address" type="inet">
+                <constraints primaryKey="true" primaryKeyName="pk_geo_locations_ip"/>
+            </column>
+            <column name="latitude" type="double precision">
+                <constraints nullable="false"/>
+            </column>
+            <column name="longitude" type="double precision">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="AnatolyT" id="PMT-1-weather">
+        <createTable tableName="weather_cache">
+            <column name="latitude" type="double precision">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_weather"/>
+            </column>
+            <column name="longitude" type="double precision">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_weather"/>
+            </column>
+            <column name="weather_data" type="json">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

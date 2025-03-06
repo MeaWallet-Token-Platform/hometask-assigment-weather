@@ -1,4 +1,4 @@
-package com.paymentology.weather.infra.location;
+package com.paymentology.weather.infra.location.response;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;

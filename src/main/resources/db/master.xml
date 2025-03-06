@@ -28,4 +28,6 @@
         </insert>
     </changeSet>
 
+    <include file="2025/changelog.xml" relativeToChangelogFile="true" />
+
 </databaseChangeLog>

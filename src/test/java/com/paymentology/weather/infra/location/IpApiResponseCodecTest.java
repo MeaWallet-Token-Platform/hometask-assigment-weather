@@ -2,6 +2,9 @@ package com.paymentology.weather.infra.location;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paymentology.weather.infra.location.response.Fail;
+import com.paymentology.weather.infra.location.response.IpApiResponse;
+import com.paymentology.weather.infra.location.response.Success;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
