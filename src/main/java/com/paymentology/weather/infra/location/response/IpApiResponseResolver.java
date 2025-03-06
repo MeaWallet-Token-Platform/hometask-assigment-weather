@@ -1,4 +1,4 @@
-package com.paymentology.weather.infra.location;
+package com.paymentology.weather.infra.location.response;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DatabindContext;
@@ -30,7 +30,7 @@ public class IpApiResponseResolver extends TypeIdResolverBase {
     }
 
     @Override
-    public JavaType typeFromId(DatabindContext context, String id) throws IOException {
+    public JavaType typeFromId(DatabindContext context, String id) {
         return switch (id) {
             case Success.STATUS -> TypeFactory.defaultInstance().constructType(Success.class);
             case Fail.STATUS -> TypeFactory.defaultInstance().constructType(Fail.class);

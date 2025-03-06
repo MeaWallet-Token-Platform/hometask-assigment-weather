@@ -1,21 +1,21 @@
 package com.paymentology.weather.infra.weather;
 
 import com.paymentology.weather.domain.location.GeoLocation;
-import com.paymentology.weather.domain.weather.WeatherService;
-import com.paymentology.weather.domain.weather.model.Weather;
-import com.paymentology.weather.domain.weather.model.Temperature;
-import com.paymentology.weather.domain.weather.model.TemperatureUnit;
-import com.paymentology.weather.domain.weather.model.Wind;
+import com.paymentology.weather.domain.weather.*;
+import com.paymentology.weather.infra.cache.weather.WeatherCacheService;
+import com.paymentology.weather.infra.weather.dto.OpenMeteoCurrentWeather;
+import com.paymentology.weather.infra.weather.dto.OpenMeteoResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.Clock;
-import java.util.Map;
+import java.net.URI;
+import java.time.Instant;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Service
 public class OpenMeteoWeatherService implements WeatherService {
@@ -24,52 +24,54 @@ public class OpenMeteoWeatherService implements WeatherService {
 
     private final OpenMeteoConfig openMeteoConfig;
     private final RestTemplate restTemplate;
+    private final WeatherCacheService weatherCacheService;
 
     @Autowired
-    public OpenMeteoWeatherService(OpenMeteoConfig openMeteoConfig, RestTemplate restTemplate) {
+    public OpenMeteoWeatherService(OpenMeteoConfig openMeteoConfig,
+                                   RestTemplate restTemplate,
+                                   WeatherCacheService weatherCacheService) {
         this.openMeteoConfig = openMeteoConfig;
         this.restTemplate = restTemplate;
+        this.weatherCacheService = weatherCacheService;
     }
 
-    // todo: @NameHidden you kidding me man... I will show this to a candidate and will ask his opinion.
     @Override
-    @SuppressWarnings("unchecked")
-    public Weather get(GeoLocation geo_location, TemperatureUnit unit) {
-        Function<? super Map, Map<String, Object>> currentWeatherOf = rsp -> (Map<String, Object>) rsp.get("current_weather");
-        Function<Map<String, Object>, Wind> windOf = cw -> new Wind(doubleOf("windspeed", cw), doubleOf("winddirection", cw));
-        Function<Map<String, Object>, Temperature> temperatureOf = cw -> new Temperature(doubleOf("temperature", cw), unit);
-
-        var queryString = String.format(
-                "?latitude=%f&longitude=%f&current_weather=true&temperature_unit=%s",
-                geo_location.latitude(),
-                geo_location.longitude(),
-                unitOf(unit)
-        );
-        var url = switch (openMeteoConfig.getUrl()) {
-            case String s && s.endsWith("/") -> s.substring(0, s.length() - 1) + queryString;
-            case String s -> s + queryString;
-        };
-        var rsp = restTemplate.getForObject(url, Map.class);
-        return Optional.ofNullable(rsp)
-                .map(currentWeatherOf)
-                .map(cw -> new Weather(temperatureOf.apply(cw), windOf.apply(cw), Clock.systemUTC().instant()))
+    public Weather get(GeoLocation geoLocation, TemperatureUnit unit) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(openMeteoConfig.getUrl())
+                .queryParam("latitude", geoLocation.latitude())
+                .queryParam("longitude", geoLocation.longitude())
+                .queryParam("current_weather", true)
+                .queryParam("temperature_unit", unit.name().toLowerCase())
+                .build()
+                .toUri();
+        return getOpenMeteoResponse(uri)
+                .map(OpenMeteoResponse::currentWeather)
+                .map(cw -> createWeatherAndStoreInCache(geoLocation, cw, unit))
+                .or(() -> weatherCacheService.getCached(geoLocation.latitude(), geoLocation.longitude()))
                 .orElseThrow();
     }
 
-    private String unitOf(TemperatureUnit unit) {
-        return switch (unit) {
-            case Celsius -> "celsius";
-            case Fahrenheit -> "fahrenheit";
-            case Kelvin -> throw new IllegalArgumentException("Unsupported temperature unit " + unit);
-        };
+    private Weather createWeatherAndStoreInCache(GeoLocation geoLocation,
+                                                 OpenMeteoCurrentWeather openMeteoCurrentWeather,
+                                                 TemperatureUnit temperatureUnit) {
+        var wind = new Wind(openMeteoCurrentWeather.windSpeed(), openMeteoCurrentWeather.windDirection());
+        var temperature = new Temperature(openMeteoCurrentWeather.temperature(), temperatureUnit);
+        var weather = new Weather(temperature, wind, Instant.now());
+        weatherCacheService.createOrUpdateCacheEntry(geoLocation.latitude(), geoLocation.longitude(), weather);
+        return weather;
     }
 
-    private double doubleOf(String key, Map<String, Object> currentWeather) {
-        var value = currentWeather.get(key);
-        return switch (value) {
-            case Double v -> v;
-            case null -> throw new IllegalArgumentException("No value present for key " + key);
-            default -> throw new IllegalArgumentException("Unexpected type " + value.getClass());
-        };
+    private Optional<OpenMeteoResponse> getOpenMeteoResponse(URI uri) {
+        try {
+            var response = restTemplate.getForEntity(uri, OpenMeteoResponse.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return Optional.ofNullable(response.getBody());
+            } else {
+                log.warn(String.format("Open-meteo response status is %s. Request uri: %s", response.getStatusCode(), uri));
+            }
+        } catch (RestClientException ex) {
+            log.warn("Call to Open-meteo API ended with exception. Message: " + ex.getMessage());
+        }
+        return Optional.empty();
     }
 }

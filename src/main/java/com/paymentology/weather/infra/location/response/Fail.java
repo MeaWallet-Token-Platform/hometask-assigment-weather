@@ -1,4 +1,4 @@
-package com.paymentology.weather.infra.location;
+package com.paymentology.weather.infra.location.response;
 
 public record Fail(String message, String query) implements IpApiResponse {
 
