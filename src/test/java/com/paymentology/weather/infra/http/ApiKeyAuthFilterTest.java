@@ -2,71 +2,84 @@ package com.paymentology.weather.infra.http;
 
 import com.paymentology.weather.domain.client.ClientApiKey;
 import com.paymentology.weather.domain.client.ClientKeyRepository;
+import com.paymentology.weather.infra.security.ApiKeyAuthFilter;
+import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ApiKeyAuthFilterTest {
 
     @Mock
-    ClientKeyRepository repo;
+    private ClientKeyRepository keyRepo;
 
     @InjectMocks
-    ApiKeyAuthFilter victim;
+    private ApiKeyAuthFilter victim;
 
     @Test
-    public void apiKeyIsPresentAndNotRevoked() throws Exception {
-        var rqt = new MockHttpServletRequest();
-        var rsp = new MockHttpServletResponse();
-        var chain = new MockFilterChain();
-        rqt.addHeader("X-API-KEY", "key-1");
-        var key = new ClientApiKey(1, "key-1", false);
-        given(repo.find("key-1")).willReturn(Optional.of(key));
-        victim.doFilterInternal(rqt, rsp, chain);
-        assertEquals(200, rsp.getStatus());
+    void shouldReturn401WhenApiKeyIsMissing() throws Exception {
+        var request = new MockHttpServletRequest();
+        var response = new MockHttpServletResponse();
+        var filterChain = mock(FilterChain.class);
+
+        victim.doFilterInternal(request, response, filterChain);
+
+        assertEquals(401, response.getStatus());
+        assertEquals("Missing API key", response.getErrorMessage());
     }
 
     @Test
-    public void noHeaderAs403() throws Exception {
-        var rqt = new MockHttpServletRequest();
-        var rsp = new MockHttpServletResponse();
-        var chain = new MockFilterChain();
-        victim.doFilterInternal(rqt, rsp, chain);
-        assertEquals(403, rsp.getStatus());
+    void shouldReturn403WhenApiKeyNotFound() throws Exception {
+        var request = new MockHttpServletRequest();
+        var response = new MockHttpServletResponse();
+        var filterChain = mock(FilterChain.class);
+        request.addHeader("X-API-KEY", "non-existent-key");
+        given(keyRepo.find(anyString())).willReturn(Optional.empty());
+
+        victim.doFilterInternal(request, response, filterChain);
+
+        assertEquals(403, response.getStatus());
+        assertEquals("Invalid API key", response.getErrorMessage());
     }
 
     @Test
-    public void keyNotFoundAs403() throws Exception {
-        var rqt = new MockHttpServletRequest();
-        var rsp = new MockHttpServletResponse();
-        var chain = new MockFilterChain();
-        rqt.addHeader("X-API-KEY", "key-1");
-        given(repo.find("key-1")).willReturn(Optional.empty());
-        victim.doFilterInternal(rqt, rsp, chain);
-        assertEquals(403, rsp.getStatus());
+    void shouldReturn403WhenApiKeyIsRevoked() throws Exception {
+        var request = new MockHttpServletRequest();
+        var response = new MockHttpServletResponse();
+        var filterChain = mock(FilterChain.class);
+        var apiKey = "valid-but-revoked-key";
+        request.addHeader("X-API-KEY", apiKey);
+        given(keyRepo.find(apiKey)).willReturn(Optional.of(new ClientApiKey(1L, apiKey, true)));
+
+        victim.doFilterInternal(request, response, filterChain);
+
+        assertEquals(403, response.getStatus());
+        assertEquals("Invalid API key", response.getErrorMessage());
     }
 
     @Test
-    public void keyRevokedAs403()throws Exception{
-        var rqt = new MockHttpServletRequest();
-        var rsp = new MockHttpServletResponse();
-        var chain = new MockFilterChain();
-        rqt.addHeader("X-API-KEY", "key-1");
-        var key = new ClientApiKey(1, "key-1", true);
-        given(repo.find("key-1")).willReturn(Optional.of(key));
-        victim.doFilterInternal(rqt, rsp, chain);
-        assertEquals(403, rsp.getStatus());
-    }
+    void shouldContinueFilterChainWhenApiKeyIsValid() throws Exception {
+        var request = new MockHttpServletRequest();
+        var response = new MockHttpServletResponse();
+        var filterChain = mock(FilterChain.class);
+        var apiKey = "valid-key";
+        request.addHeader("X-API-KEY", apiKey);
+        given(keyRepo.find(apiKey)).willReturn(Optional.of(new ClientApiKey(1L, apiKey, false)));
 
+        victim.doFilterInternal(request, response, filterChain);
+
+        assertEquals(200, response.getStatus());
+        verify(filterChain).doFilter(request, response);
+    }
 }

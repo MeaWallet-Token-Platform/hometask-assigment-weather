@@ -4,7 +4,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet author="john.doe" id="create.table.client_api_keys">
+    <changeSet author="weather-service" id="create-table-client-api-keys-001">
         <createTable tableName="client_api_keys">
             <column autoIncrement="true" name="id" type="bigint">
                 <constraints primaryKey="true" primaryKeyName="pk_client_api_key_id"/>
@@ -18,7 +18,8 @@
             <column name="created_at" type="timestamp" defaultValueComputed="now()"/>
         </createTable>
     </changeSet>
-    <changeSet author="unknown" id="default_client_api_keys">
+
+    <changeSet author="weather-service" id="insert-default-client-api-keys-002">
         <insert tableName="client_api_keys">
             <column name="api_key" value="M2ZjNDZmOWItMzJmMC00YzhlLWE3ZTctNDY3YzQ2YzAzZjli"/>
         </insert>
