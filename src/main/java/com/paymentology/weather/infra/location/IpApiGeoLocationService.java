@@ -32,7 +32,7 @@ public class IpApiGeoLocationService implements GeoLocationService {
         return switch (response) {
             case Success s -> Optional.of(new GeoLocation(s.lat(), s.lon()));
             case Fail f -> {
-                log.error("Failed to fetch geo location by ip {}, result {}", ip, f);
+                log.error("Failed to fetch geo location by ip {}, result {}", ip.getHostAddress(), f);
                 yield Optional.empty();
             }
         };
@@ -40,10 +40,9 @@ public class IpApiGeoLocationService implements GeoLocationService {
 
     private IpApiResponse tryDetect(InetAddress ip) {
         try {
-            var url = switch (ipApiConfig.getUrl()) {
-                case String s && s.endsWith("/") -> s + ip.getHostAddress();
-                case String s -> s + "/" + ip.getHostAddress();
-            };
+            String baseUrl = ipApiConfig.getUrl();
+            String ipAddress = ip.getHostAddress();
+            String url = baseUrl.endsWith("/") ? baseUrl + ipAddress : baseUrl + "/" + ipAddress;
             return restTemplate.getForObject(url, IpApiResponse.class);
         } catch (Throwable t) {
             return failOf(t, ip);
@@ -51,9 +50,12 @@ public class IpApiGeoLocationService implements GeoLocationService {
     }
 
     private Fail failOf(Throwable err, InetAddress ip) {
-        return switch (err) {
-            case RestClientResponseException e -> new Fail("IpApi invocation status " + e.getStatusCode().value() + ". Message: " + e.getMessage(), ip.toString());
-            default -> new Fail("IpApi invocation failed with no status. Original message: " + err.getMessage(), ip.toString());
+        String message = switch (err) {
+            case RestClientResponseException e ->
+                    "IpApi invocation failed: " + e.getStatusCode().value() + " " + e.getStatusText();
+            default ->
+                    "IpApi invocation failed: " + err.getMessage();
         };
+        return new Fail(message, ip.getHostAddress());
     }
 }

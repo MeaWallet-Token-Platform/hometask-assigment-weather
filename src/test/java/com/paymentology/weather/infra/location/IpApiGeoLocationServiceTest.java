@@ -21,7 +21,7 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class IpApiGeoLocationServiceTest {
 
-    String url = "http://ip-api.com/json";
+    private static final String BASE_URL = "http://ip-api.com/json";
 
     @Mock
     IpApiConfig ipApiConfig;
@@ -30,56 +30,74 @@ class IpApiGeoLocationServiceTest {
     RestTemplate restTemplate;
 
     @InjectMocks
-    IpApiGeoLocationService victim;
+    IpApiGeoLocationService ipApiGeoLocationService;
 
     @BeforeEach
     void setUp() {
-        given(ipApiConfig.getUrl()).willReturn(url);
+        given(ipApiConfig.getUrl()).willReturn(BASE_URL);
     }
 
     @Test
-    public void success() throws Exception {
-        given(restTemplate.getForObject(url + "/81.198.87.60", IpApiResponse.class))
-                .willReturn(new Success(
-                        "81.198.87.60",
-                        "Latvia",
-                        "LV",
-                        "RIX",
-                        "Riga",
-                        "Riga",
-                        "LV-1063",
-                        56.9496,
-                        24.0978,
-                        "Europe/Riga",
-                        "Lattelekom",
-                        "Bridge Group",
-                        "AS12578 SIA Tet"
-                ));
-        var result = victim.detectByIp(InetAddress.getByName("81.198.87.60"));
+    void shouldReturnSuccess() throws Exception {
+        // given
+        String ip = "81.198.87.60";
+        String url = BASE_URL + "/" + ip;
+        Success response = new Success(
+                ip,
+                "Latvia",
+                "LV",
+                "RIX",
+                "Riga",
+                "Riga",
+                "LV-1063",
+                56.9496,
+                24.0978,
+                "Europe/Riga",
+                "Lattelekom",
+                "Bridge Group",
+                "AS12578 SIA Tet"
+        );
+        given(restTemplate.getForObject(url, IpApiResponse.class))
+                .willReturn(response);
+
+        var result = ipApiGeoLocationService.detectByIp(InetAddress.getByName(ip));
+
         assertEquals(Optional.of(new GeoLocation(56.9496, 24.0978)), result);
     }
 
     @Test
-    public void error200() throws Exception {
-        given(restTemplate.getForObject(url + "json/0.0.0.0", IpApiResponse.class))
-                .willReturn(new Fail("reserved range", "0.0.0.0"));
-        var result = victim.detectByIp(InetAddress.getByName("0.0.0.0"));
+    void shouldReturnReservedRangeError() throws Exception {
+        String ip = "0.0.0.0";
+        String url = BASE_URL + "/" + ip;
+        given(restTemplate.getForObject(url, IpApiResponse.class))
+                .willReturn(new Fail("reserved range", ip));
+
+        var result = ipApiGeoLocationService.detectByIp(InetAddress.getByName(ip));
+
         assertEquals(Optional.empty(), result);
     }
 
     @Test
-    void error4xx() throws Exception {
-        given(restTemplate.getForObject(url + "/81.198.87.60", IpApiResponse.class))
+    void shouldReturnNotFoundError() throws Exception {
+        String ip = "93.139.203.118";
+        String url = BASE_URL + "/" + ip;
+        given(restTemplate.getForObject(url, IpApiResponse.class))
                 .willThrow(new ResponseStatusException(HttpStatusCode.valueOf(404)));
-        var result = victim.detectByIp(InetAddress.getByName("81.198.87.60"));
+
+        var result = ipApiGeoLocationService.detectByIp(InetAddress.getByName(ip));
+
         assertEquals(Optional.empty(), result);
     }
 
     @Test
-    void errorThrowable() throws Exception {
-        given(restTemplate.getForObject(url + "/81.198.87.60", IpApiResponse.class))
+    void shouldReturnErrorThrowable() throws Exception {
+        String ip = "93.139.203.118";
+        String url = BASE_URL + "/" + ip;
+        given(restTemplate.getForObject(url, IpApiResponse.class))
                 .willThrow(new RestClientException("mock"));
-        var result = victim.detectByIp(InetAddress.getByName("81.198.87.60"));
+
+        var result = ipApiGeoLocationService.detectByIp(InetAddress.getByName(ip));
+
         assertEquals(Optional.empty(), result);
     }
 }
