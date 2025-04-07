@@ -1,12 +1,57 @@
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost/weather
-    username: postgres
-    password: postgres
   liquibase:
     change-log: classpath:db/master.xml
+
+  # >>> Only for Liquibase migration (JDBC-based)
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/weather
+    username: postgres
+    password: postgres
+
+  # >>> Runtime Reactive DB connections
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/weather
+    username: postgres
+    password: postgres
+
+  cache:
+    type: redis
+  data:
+    redis:
+      port: 6379
+      host: localhost
+
 ip-api:
-  url: http://ip-api.com/json
+  url: "http://ip-api.com/json"
+
 open-meteo:
-  url: https://api.open-meteo.com/v1/forecast/
+  url: "https://api.open-meteo.com/v1/forecast/"
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      ipApi:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+      openMeteo:
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 20s
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+

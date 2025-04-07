@@ -2,39 +2,91 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.4'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'jacoco' // ✅ JaCoCo plugin əlavə olundu
 }
 
 group = 'com.paymentology'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
-targetCompatibility = '17'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
+ext {
+    resilience4jVersion = '2.3.0'
+    r2dbcPostgresVersion = '0.8.13.RELEASE'
+    postgresJdbcVersion = '42.7.3'
+    hibernateValidatorVersion = '8.0.1.Final'
+}
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // --- Spring Boot Starters ---
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+
+    // --- Database ---
+    implementation "io.r2dbc:r2dbc-postgresql:${r2dbcPostgresVersion}"
+    runtimeOnly "org.postgresql:postgresql:${postgresJdbcVersion}"
+
+    // --- Liquibase ---
     implementation 'org.liquibase:liquibase-core'
-    implementation 'org.postgresql:postgresql:42.5.4'
-    implementation 'org.hibernate:hibernate-validator:6.0.16.Final'
+
+    // --- Observability / Resilience ---
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation "io.github.resilience4j:resilience4j-micrometer:${resilience4jVersion}"
+    implementation "io.github.resilience4j:resilience4j-reactor:${resilience4jVersion}"
+    implementation "io.github.resilience4j:resilience4j-spring-boot3:${resilience4jVersion}"
+
+    // --- Bean Validation ---
+    implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
+
+    // --- Lombok ---
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // --- Testing ---
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+    testImplementation 'org.assertj:assertj-core'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
-
-var preview = '--enable-preview'
+def previewFlag = '--enable-preview'
 tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs += preview
+    options.compilerArgs += previewFlag
 }
-
 tasks.withType(Test).configureEach {
-    jvmArgs += preview
+    jvmArgs += previewFlag
+    useJUnitPlatform()
+    finalizedBy
+}
+tasks.withType(JavaExec).configureEach {
+    jvmArgs += previewFlag
 }
 
-tasks.withType(JavaExec).configureEach {
-    jvmArgs += preview
+jacoco {
+    toolVersion = "0.8.10"
 }
-tasks.named('test') {
-    useJUnitPlatform()
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required = true
+        xml.required = true
+        csv.required = false
+    }
 }
