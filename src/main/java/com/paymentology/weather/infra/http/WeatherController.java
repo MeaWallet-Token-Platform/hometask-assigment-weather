@@ -2,19 +2,25 @@ package com.paymentology.weather.infra.http;
 
 import com.paymentology.weather.domain.location.GeoLocationService;
 import com.paymentology.weather.domain.weather.WeatherService;
-import com.paymentology.weather.domain.weather.model.Weather;
 import com.paymentology.weather.domain.weather.model.TemperatureUnit;
-import jakarta.servlet.http.HttpServletRequest;
+import com.paymentology.weather.infra.http.response.WeatherJsonResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.InetAddress;
-import java.util.Optional;
+import java.net.UnknownHostException;
+import java.time.Instant;
 
 @RestController
 public class WeatherController {
+    private static final Logger log = LoggerFactory.getLogger(WeatherController.class);
 
     @Autowired
     private WeatherService weatherService;
@@ -23,25 +29,30 @@ public class WeatherController {
     private GeoLocationService geoLocationService;
 
     @GetMapping(path = "/weather")
-    public Optional<Weather> get(@RequestParam(name = "unit", defaultValue = "celsius") String tempUnit, HttpServletRequest rqt) throws Throwable {
-        var unit = tempUnit.equalsIgnoreCase("Celsius")
-                ? TemperatureUnit.Celsius
-                : tempUnit.equalsIgnoreCase("Fahrenheit")
-                ? TemperatureUnit.Fahrenheit
-                : TemperatureUnit.Kelvin;
-        return Optional
-                .ofNullable(rqt.getHeader("X-Forwarded-For"))
-                .flatMap(this::resolve)
-                .flatMap(ip -> geoLocationService.detectByIp(ip))
-                .map(l -> weatherService.get(l, unit));
-    }
+    public ResponseEntity<WeatherJsonResponse> getWeather(
+            @RequestParam(name = "unit", defaultValue = "celsius") String tempUnitParam,
+            @RequestHeader(name = "X-Forwarded-For") String ipAddress,
+            @RequestHeader(name = "X-API-KEY") String apiKey) {
 
-    private Optional<InetAddress> resolve(String ip) {
+        log.debug("Received weather request for IP: {}", ipAddress);
+
         try {
-            var a = InetAddress.getByName(ip);
-            return Optional.of(a);
-        } catch (Throwable e) {
-            return Optional.empty();
+            InetAddress resolvedIp = InetAddress.getByName(ipAddress);
+            Instant now = Instant.now();
+
+            return geoLocationService.detectByIp(resolvedIp)
+                    .flatMap(location -> weatherService.get(location, TemperatureUnit.fromString(tempUnitParam), now))
+                    .map(weather -> WeatherJsonResponse.fromWeather(weather, now))
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build());
+        } catch (UnknownHostException e) {
+            log.error("Invalid IP address: {}", ipAddress, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .build();
+        } catch (Exception e) {
+            log.error("Error retrieving weather data", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
         }
     }
 }

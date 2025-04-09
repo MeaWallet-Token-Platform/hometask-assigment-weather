@@ -1,4 +1,4 @@
-package com.paymentology.weather.infra.weather;
+package com.paymentology.weather.infra.client;
 
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
