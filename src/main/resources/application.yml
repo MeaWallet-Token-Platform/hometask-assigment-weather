@@ -6,7 +6,22 @@ spring:
     password: postgres
   liquibase:
     change-log: classpath:db/master.xml
+  application:
+    name: weather-service
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
+        open_in_view: false
+        ddl-auto: update
+
 ip-api:
   url: http://ip-api.com/json
 open-meteo:
   url: https://api.open-meteo.com/v1/forecast/
+
+weather:
+  cache:
+    maxAge: 10m
+    type: DATABASE

@@ -1,7 +1,7 @@
 package com.paymentology.weather;
 
 import com.paymentology.weather.infra.location.IpApiConfig;
-import com.paymentology.weather.infra.weather.OpenMeteoConfig;
+import com.paymentology.weather.infra.client.OpenMeteoConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

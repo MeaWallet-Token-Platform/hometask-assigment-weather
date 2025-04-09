@@ -28,4 +28,42 @@
         </insert>
     </changeSet>
 
+    <changeSet id="create.table.weather_cache" author="developer">
+        <createTable tableName="weather_cache">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="latitude" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="longitude" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="temperature" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="temperature_unit" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wind_speed" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wind_direction" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="idx_weather_cache_location" tableName="weather_cache">
+            <column name="latitude"/>
+            <column name="longitude"/>
+        </createIndex>
+
+        <createIndex indexName="idx_weather_cache_created_at" tableName="weather_cache">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>
